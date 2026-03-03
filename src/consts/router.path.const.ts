@@ -18,4 +18,11 @@ export const ROUTER_URL = {
     BASE: "/app",
     HOME: "",
   },
+  COMMON: {
+    HOME: "/",
+    ABOUT: "/ve-chung-toi",
+    CONTACT: "/lien-he",
+    FAQ: "/cau-hoi-thuong-gap",
+    COVER: "/cover",
+  },
 } as const;
