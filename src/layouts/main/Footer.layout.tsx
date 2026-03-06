@@ -1,6 +1,16 @@
 import { Link } from "react-router-dom";
 import { ROUTER_URL } from "../../consts/router.path.const";
 
+// Design system palette
+const BLUSH = "#F8EDEB";
+const PETAL = "#FCD5CE";
+const BORDER_SOFT = "#E8D5CF";
+const BROWN_DARK = "#3D2B1F";
+const BROWN_MID = "#7A5C52";
+const BROWN_MUTED = "#B09490";
+const ROSEWOOD = "#C07850";
+const ROSEWOOD_DEEP = "#A0613D";
+
 const footerLinks = {
   "Về Chúng Tôi": [
     { label: "Câu Chuyện Thương Hiệu", href: "#" },
@@ -30,7 +40,7 @@ const footerLinks = {
 
 const FooterLayout = () => {
   return (
-    <footer className="bg-[#1a1a1a] text-gray-300">
+    <footer style={{ backgroundColor: PETAL, color: BROWN_DARK }}>
       {/* Main footer grid */}
       <div className="container mx-auto px-6 pt-14 pb-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10">
@@ -40,19 +50,30 @@ const FooterLayout = () => {
               to={ROUTER_URL.PUBLIC.HOME}
               className="flex items-center gap-3 group w-fit"
             >
-              <div className="w-9 h-9 rounded-full bg-[#c5a572] flex items-center justify-center">
-                <span className="text-white text-base font-serif">✦</span>
+              <div
+                className="w-9 h-9 rounded-full flex items-center justify-center"
+                style={{ backgroundColor: ROSEWOOD }}
+              >
+                <span className="text-base font-serif" style={{ color: BLUSH }}>
+                  ✦
+                </span>
               </div>
               <div className="leading-tight">
-                <div className="text-white font-serif text-lg font-bold tracking-widest uppercase group-hover:text-[#c5a572] transition-colors">
+                <div
+                  className="font-serif text-lg font-bold tracking-widest uppercase transition-colors"
+                  style={{ color: BROWN_DARK }}
+                >
                   Parfum
                 </div>
-                <div className="text-[#c5a572] text-[9px] tracking-[0.3em] uppercase font-light">
+                <div
+                  className="text-[9px] tracking-[0.3em] uppercase font-light"
+                  style={{ color: ROSEWOOD }}
+                >
                   Maison de Luxe
                 </div>
               </div>
             </Link>
-            <p className="text-sm text-gray-400 leading-relaxed">
+            <p className="text-sm leading-relaxed" style={{ color: BROWN_MID }}>
               Mang đến những tầng hương tinh tế — nơi mỗi giọt nước hoa là một
               câu chuyện chưa kể.
             </p>
@@ -62,7 +83,23 @@ const FooterLayout = () => {
                 <a
                   key={icon}
                   href="#"
-                  className="w-8 h-8 rounded-full border border-gray-600 flex items-center justify-center text-gray-400 hover:border-[#c5a572] hover:text-[#c5a572] transition-colors text-xs font-bold"
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-colors"
+                  style={{
+                    border: `1px solid ${BORDER_SOFT}`,
+                    color: BROWN_MUTED,
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLAnchorElement).style.borderColor =
+                      ROSEWOOD;
+                    (e.currentTarget as HTMLAnchorElement).style.color =
+                      ROSEWOOD;
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLAnchorElement).style.borderColor =
+                      BORDER_SOFT;
+                    (e.currentTarget as HTMLAnchorElement).style.color =
+                      BROWN_MUTED;
+                  }}
                 >
                   {icon}
                 </a>
@@ -73,7 +110,13 @@ const FooterLayout = () => {
           {/* Link columns */}
           {Object.entries(footerLinks).map(([title, links]) => (
             <div key={title} className="flex flex-col gap-3">
-              <h4 className="text-white text-xs font-semibold tracking-[0.2em] uppercase border-b border-[#c5a572] pb-2 w-fit">
+              <h4
+                className="text-xs font-semibold tracking-[0.2em] uppercase pb-2 w-fit"
+                style={{
+                  color: BROWN_DARK,
+                  borderBottom: `1px solid ${ROSEWOOD}`,
+                }}
+              >
                 {title}
               </h4>
               <ul className="space-y-2">
@@ -81,7 +124,16 @@ const FooterLayout = () => {
                   <li key={link.label}>
                     <a
                       href={link.href}
-                      className="text-sm text-gray-400 hover:text-[#c5a572] transition-colors duration-200"
+                      className="text-sm transition-colors duration-200"
+                      style={{ color: BROWN_MID }}
+                      onMouseEnter={(e) =>
+                        ((e.currentTarget as HTMLAnchorElement).style.color =
+                          ROSEWOOD)
+                      }
+                      onMouseLeave={(e) =>
+                        ((e.currentTarget as HTMLAnchorElement).style.color =
+                          BROWN_MID)
+                      }
                     >
                       {link.label}
                     </a>
@@ -93,13 +145,16 @@ const FooterLayout = () => {
         </div>
 
         {/* Newsletter */}
-        <div className="mt-12 border-t border-gray-800 pt-10">
+        <div
+          className="mt-12 pt-10"
+          style={{ borderTop: `1px solid ${BORDER_SOFT}` }}
+        >
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
-              <p className="text-white font-serif text-lg">
+              <p className="font-serif text-lg" style={{ color: BROWN_DARK }}>
                 Nhận ưu đãi độc quyền
               </p>
-              <p className="text-gray-400 text-sm mt-1">
+              <p className="text-sm mt-1" style={{ color: BROWN_MID }}>
                 Đăng ký nhận thông tin về bộ sưu tập mới và khuyến mãi đặc biệt.
               </p>
             </div>
@@ -110,11 +165,36 @@ const FooterLayout = () => {
               <input
                 type="email"
                 placeholder="Email của bạn"
-                className="flex-1 md:w-64 px-4 py-2.5 bg-[#2a2a2a] border border-gray-700 text-gray-200 text-sm outline-none focus:border-[#c5a572] placeholder-gray-500"
+                className="flex-1 md:w-64 px-4 py-2.5 text-sm outline-none"
+                style={{
+                  backgroundColor: BLUSH,
+                  border: `1px solid ${BORDER_SOFT}`,
+                  borderRight: "none",
+                  color: BROWN_DARK,
+                }}
+                onFocus={(e) =>
+                  ((e.currentTarget as HTMLInputElement).style.borderColor =
+                    ROSEWOOD)
+                }
+                onBlur={(e) =>
+                  ((e.currentTarget as HTMLInputElement).style.borderColor =
+                    BORDER_SOFT)
+                }
               />
               <button
                 type="submit"
-                className="px-5 py-2.5 bg-[#c5a572] text-white text-sm font-medium tracking-widest uppercase hover:bg-[#9b834c] transition-colors whitespace-nowrap"
+                className="px-5 py-2.5 text-sm font-medium tracking-widest uppercase transition-colors whitespace-nowrap"
+                style={{ backgroundColor: ROSEWOOD, color: BLUSH }}
+                onMouseEnter={(e) =>
+                  ((
+                    e.currentTarget as HTMLButtonElement
+                  ).style.backgroundColor = ROSEWOOD_DEEP)
+                }
+                onMouseLeave={(e) =>
+                  ((
+                    e.currentTarget as HTMLButtonElement
+                  ).style.backgroundColor = ROSEWOOD)
+                }
               >
                 Đăng Ký
               </button>
@@ -124,17 +204,42 @@ const FooterLayout = () => {
       </div>
 
       {/* Bottom bar */}
-      <div className="border-t border-gray-800 py-5">
-        <div className="container mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-gray-500">
+      <div style={{ borderTop: `1px solid ${BORDER_SOFT}` }} className="py-5">
+        <div
+          className="container mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs"
+          style={{ color: BROWN_MUTED }}
+        >
           <p>
             © {new Date().getFullYear()} Parfum Maison de Luxe. All rights
             reserved.
           </p>
           <div className="flex gap-4">
-            <a href="#" className="hover:text-[#c5a572] transition-colors">
+            <a
+              href="#"
+              className="transition-colors"
+              style={{ color: BROWN_MUTED }}
+              onMouseEnter={(e) =>
+                ((e.currentTarget as HTMLAnchorElement).style.color = ROSEWOOD)
+              }
+              onMouseLeave={(e) =>
+                ((e.currentTarget as HTMLAnchorElement).style.color =
+                  BROWN_MUTED)
+              }
+            >
               Chính Sách Bảo Mật
             </a>
-            <a href="#" className="hover:text-[#c5a572] transition-colors">
+            <a
+              href="#"
+              className="transition-colors"
+              style={{ color: BROWN_MUTED }}
+              onMouseEnter={(e) =>
+                ((e.currentTarget as HTMLAnchorElement).style.color = ROSEWOOD)
+              }
+              onMouseLeave={(e) =>
+                ((e.currentTarget as HTMLAnchorElement).style.color =
+                  BROWN_MUTED)
+              }
+            >
               Điều Khoản Sử Dụng
             </a>
           </div>

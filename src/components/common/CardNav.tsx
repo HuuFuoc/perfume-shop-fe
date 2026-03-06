@@ -27,6 +27,12 @@ export interface CardNavProps {
   buttonTextColor?: string;
   buttonLabel?: string;
   buttonHref?: string;
+  secondButtonBgColor?: string;
+  secondButtonTextColor?: string;
+  secondButtonLabel?: string;
+  secondButtonHref?: string;
+  /** When provided, replaces the CTA button area entirely */
+  rightNode?: React.ReactNode;
 }
 
 const CardNav: React.FC<CardNavProps> = ({
@@ -40,6 +46,11 @@ const CardNav: React.FC<CardNavProps> = ({
   buttonTextColor = "#F8EDEB",
   buttonLabel = "Đăng Ký",
   buttonHref = "/register",
+  secondButtonBgColor,
+  secondButtonTextColor,
+  secondButtonLabel,
+  secondButtonHref,
+  rightNode,
 }) => {
   const [isHamburgerOpen, setIsHamburgerOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -223,14 +234,37 @@ const CardNav: React.FC<CardNavProps> = ({
             {logoNode}
           </div>
 
-          {/* CTA button — right */}
-          <a
-            href={buttonHref}
-            className="hidden md:inline-flex items-center rounded-xl px-5 h-[42px] text-sm font-semibold tracking-widest uppercase cursor-pointer transition-all duration-300 hover:opacity-85"
-            style={{ backgroundColor: buttonBgColor, color: buttonTextColor }}
-          >
-            {buttonLabel}
-          </a>
+          {/* CTA buttons — right */}
+          <div className="hidden md:flex items-center gap-2">
+            {rightNode ? (
+              rightNode
+            ) : (
+              <>
+                {secondButtonLabel && secondButtonHref && (
+                  <a
+                    href={secondButtonHref}
+                    className="inline-flex items-center rounded-xl px-5 h-[42px] text-sm font-semibold tracking-widest uppercase cursor-pointer transition-all duration-300 hover:opacity-85"
+                    style={{
+                      backgroundColor: secondButtonBgColor ?? buttonBgColor,
+                      color: secondButtonTextColor ?? buttonTextColor,
+                    }}
+                  >
+                    {secondButtonLabel}
+                  </a>
+                )}
+                <a
+                  href={buttonHref}
+                  className="inline-flex items-center rounded-xl px-5 h-[42px] text-sm font-semibold tracking-widest uppercase cursor-pointer transition-all duration-300 hover:opacity-85"
+                  style={{
+                    backgroundColor: buttonBgColor,
+                    color: buttonTextColor,
+                  }}
+                >
+                  {buttonLabel}
+                </a>
+              </>
+            )}
+          </div>
         </div>
 
         {/* ── Expandable card panel ── */}

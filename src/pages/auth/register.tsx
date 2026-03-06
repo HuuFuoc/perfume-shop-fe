@@ -5,13 +5,21 @@ import { AuthShell } from "../../components/auth/AuthShell";
 import { AuthInput } from "../../components/auth/AuthInput";
 import { ROUTER_URL } from "../../consts/router.path.const";
 
-export default function Login() {
+export default function Register() {
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [confirmError, setConfirmError] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: handle login logic
+    if (password !== confirm) {
+      setConfirmError("Mật khẩu xác nhận không khớp.");
+      return;
+    }
+    setConfirmError("");
+    // TODO: handle register logic
   };
 
   return (
@@ -22,15 +30,25 @@ export default function Login() {
           className="font-serif text-2xl lg:text-[28px] font-bold mb-2 leading-snug"
           style={{ color: "#3D2B1F" }}
         >
-          Chào mừng trở lại
+          Tạo tài khoản
         </h1>
         <p className="text-sm" style={{ color: "#7A5C52" }}>
-          Đăng nhập để tiếp tục hành trình hương thơm của bạn.
+          Tham gia cộng đồng yêu hương thơm cao cấp của chúng tôi.
         </p>
       </div>
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
+        <AuthInput
+          label="Họ và tên"
+          type="text"
+          placeholder="Nguyễn Văn A"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          required
+          autoComplete="name"
+        />
+
         <AuthInput
           label="Email"
           type="email"
@@ -41,33 +59,36 @@ export default function Login() {
           autoComplete="email"
         />
 
-        <div className="flex flex-col gap-1.5">
-          <AuthInput
-            label="Mật khẩu"
-            type="password"
-            placeholder="••••••••"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            autoComplete="current-password"
-          />
-          <div className="text-right mt-1">
-            <a
-              href="#"
-              className="text-[11px] font-medium hover:underline transition-colors"
-              style={{ color: "#C07850" }}
-            >
-              Quên mật khẩu?
-            </a>
-          </div>
-        </div>
+        <AuthInput
+          label="Mật khẩu"
+          type="password"
+          placeholder="••••••••"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          autoComplete="new-password"
+        />
+
+        <AuthInput
+          label="Xác nhận mật khẩu"
+          type="password"
+          placeholder="••••••••"
+          value={confirm}
+          onChange={(e) => {
+            setConfirm(e.target.value);
+            if (confirmError) setConfirmError("");
+          }}
+          required
+          autoComplete="new-password"
+          error={confirmError}
+        />
 
         <button
           type="submit"
           className="w-full h-[48px] rounded-xl text-sm font-semibold tracking-[0.12em] uppercase mt-1 transition-all duration-200 hover:brightness-110 active:scale-[0.98] shadow-sm"
           style={{ backgroundColor: "#C07850", color: "#F8EDEB" }}
         >
-          Đăng Nhập
+          Đăng Ký
         </button>
       </form>
 
@@ -94,18 +115,18 @@ export default function Login() {
         }}
       >
         <FcGoogle size={20} />
-        Tiếp tục với Google
+        Đăng ký với Google
       </button>
 
-      {/* Register link */}
+      {/* Login link */}
       <p className="text-center text-sm mt-8" style={{ color: "#7A5C52" }}>
-        Chưa có tài khoản?{" "}
+        Đã có tài khoản?{" "}
         <Link
-          to={ROUTER_URL.AUTH.SIGN_UP}
+          to={ROUTER_URL.AUTH.LOGIN}
           className="font-semibold hover:underline transition-colors"
           style={{ color: "#C07850" }}
         >
-          Đăng ký ngay
+          Đăng nhập ngay
         </Link>
       </p>
     </AuthShell>

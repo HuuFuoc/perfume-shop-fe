@@ -12,11 +12,15 @@ export const ROUTER_URL = {
   },
   ADMIN: {
     BASE: "/admin",
-    DASHBOARD: "dashboard",
+    DASHBOARD: "/dashboard",
+    BRANDS: "/brands",
+    PERFUMES: "/perfumes",
   },
   USER: {
     BASE: "/app",
     HOME: "",
+    PROFILE: "/profile",
+    SETTING: "/setting",
   },
   COMMON: {
     HOME: "/",

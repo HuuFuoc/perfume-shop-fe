@@ -1,3 +1,3 @@
 export default function AdminDashboard() {
-  return <div>Admin Dashboard</div>;
+  return <div>Tất cả thằng user nằm ở đây</div>;
 }

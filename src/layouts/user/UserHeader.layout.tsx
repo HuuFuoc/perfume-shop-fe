@@ -1,8 +1,9 @@
 import { useEffect, useRef } from "react";
 import CardNav from "../../components/common/CardNav";
+import UserAvatarMenu from "../../components/common/UserAvatarMenu";
 import { ROUTER_URL } from "../../consts/router.path.const";
 
-// ── Palette ─────────────────────────────────────
+// ── Palette (mirrors Header.layout.tsx) ──────────
 const BLUSH = "#F8EDEB";
 const PETAL = "#FCD5CE";
 const PETAL_DEEP = "#F4B8AE";
@@ -10,7 +11,7 @@ const PEACH = "#FFD7BA";
 const BROWN_DARK = "#3D2B1F";
 const ROSEWOOD = "#C07850";
 
-// ── Nav items mapped to palette cards ───────────
+// ── Nav items ────────────────────────────────────
 const cardItems = [
   {
     label: "Trang Chủ",
@@ -65,7 +66,7 @@ const cardItems = [
   },
 ];
 
-// ── Logo node ────────────────────────────────────
+// ── Logo node ─────────────────────────────────────
 const LogoNode = () => (
   <a href={ROUTER_URL.PUBLIC.HOME} className="flex items-center gap-2.5 group">
     <div
@@ -93,21 +94,17 @@ const LogoNode = () => (
   </a>
 );
 
-// ── Header ───────────────────────────────────────
-const HeaderLayout = () => {
+// ── UserHeader ────────────────────────────────────
+const UserHeaderLayout = () => {
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  // Dynamically adjust the wrapper height as the CardNav expands
   useEffect(() => {
     const wrapper = wrapperRef.current;
     if (!wrapper) return;
-
     const nav = wrapper.querySelector(".card-nav") as HTMLElement | null;
     if (!nav) return;
-
-    // Use a ResizeObserver to keep the wrapper height in sync
     const ro = new ResizeObserver(() => {
-      wrapper.style.height = nav.offsetHeight + 24 + "px"; // 24 = top offset
+      wrapper.style.height = nav.offsetHeight + 24 + "px";
     });
     ro.observe(nav);
     return () => ro.disconnect();
@@ -123,33 +120,23 @@ const HeaderLayout = () => {
         ✦ MIỄN PHÍ GIAO HÀNG CHO ĐƠN HÀNG TRÊN 500.000 vn₫ ✦
       </div>
 
-      {/* ── CardNav wrapper ── keeps the floating nav in flow ── */}
+      {/* ── CardNav wrapper ── */}
       <div
         ref={wrapperRef}
         className="relative w-full"
-        style={{
-          height: "88px", // default collapsed height + top offset
-          zIndex: 50,
-        }}
+        style={{ height: "88px", zIndex: 50 }}
       >
         <CardNav
           logoNode={<LogoNode />}
           items={cardItems}
           baseColor={BLUSH}
           menuColor={BROWN_DARK}
-          buttonBgColor={ROSEWOOD}
-          buttonTextColor={BLUSH}
-          buttonLabel="Đăng Ký"
-          buttonHref={ROUTER_URL.AUTH.SIGN_UP}
-          secondButtonLabel="Đăng Nhập"
-          secondButtonHref={ROUTER_URL.AUTH.LOGIN}
-          secondButtonTextColor="#F8EDEB"
-          secondButtonBgColor="#C07850"
           ease="power3.out"
+          rightNode={<UserAvatarMenu displayName="Người dùng" />}
         />
       </div>
     </>
   );
 };
 
-export default HeaderLayout;
+export default UserHeaderLayout;
