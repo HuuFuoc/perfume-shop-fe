@@ -120,7 +120,7 @@ const HeaderLayout = () => {
         className="w-full text-center py-1.5 text-xs tracking-widest font-light z-[100] relative"
         style={{ backgroundColor: ROSEWOOD, color: BLUSH }}
       >
-        ✦ MIỄN PHÍ GIAO HÀNG CHO ĐƠN HÀNG TRÊN 500.000₫ ✦
+        ✦ MIỄN PHÍ GIAO HÀNG CHO ĐƠN HÀNG TRÊN 500.000 vn₫ ✦
       </div>
 
       {/* ── CardNav wrapper ── keeps the floating nav in flow ── */}
