@@ -4,7 +4,7 @@ import FooterLayout from "./Footer.layout";
 
 export default function MainLayout() {
   return (
-    <div className="flex flex-col min-h-screen bg-[#f8f5f0]">
+    <div className="flex flex-col min-h-screen bg-blush">
       <HeaderLayout />
 
       <main className="flex-grow">
