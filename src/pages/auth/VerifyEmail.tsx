@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import { CheckCircle, XCircle, Loader2 } from "lucide-react";
+import { AuthShell } from "../../components/auth/AuthShell";
 import { AuthService } from "../../services/auth/auth.services";
 import { HttpException } from "../../app/exceptions";
 import { ROUTER_URL } from "../../consts/router.path.const";
@@ -37,41 +39,55 @@ export default function VerifyEmail() {
   }, [searchParams]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md rounded-2xl bg-white p-10 text-center shadow-md">
+    <AuthShell>
+      <div className="flex flex-col items-center text-center">
         {state === "loading" && (
           <>
-            <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-4 border-gray-200 border-t-gray-700" />
-            <p className="text-gray-600">Đang xác minh email của bạn...</p>
+            <Loader2
+              size={44}
+              className="animate-spin mb-6"
+              style={{ color: "#C07850" }}
+            />
+            <h1
+              className="font-serif text-2xl lg:text-[28px] font-bold mb-2 leading-snug"
+              style={{ color: "#3D2B1F" }}
+            >
+              Đang xác minh...
+            </h1>
+            <p className="text-sm" style={{ color: "#7A5C52" }}>
+              Vui lòng chờ trong giây lát.
+            </p>
           </>
         )}
 
         {state === "success" && (
           <>
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-green-100">
-              <svg
-                className="h-7 w-7 text-green-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
+            <div
+              className="w-16 h-16 rounded-full flex items-center justify-center mb-6"
+              style={{ backgroundColor: "#C07850" }}
+            >
+              <CheckCircle size={30} style={{ color: "#F8EDEB" }} />
             </div>
-            <h2 className="mb-2 text-xl font-semibold text-gray-800">
+            <h1
+              className="font-serif text-2xl lg:text-[28px] font-bold mb-2 leading-snug"
+              style={{ color: "#3D2B1F" }}
+            >
               Xác minh thành công!
-            </h2>
-            <p className="mb-6 text-gray-500">
+            </h1>
+            <p className="text-sm mb-8" style={{ color: "#7A5C52" }}>
               Email của bạn đã được xác minh. Bạn có thể đăng nhập ngay bây giờ.
             </p>
+            <div
+              className="w-full"
+              style={{
+                borderTop: "1px solid #E8D5CF",
+                marginBottom: "1.75rem",
+              }}
+            />
             <button
               onClick={() => navigate(ROUTER_URL.AUTH.LOGIN)}
-              className="rounded-lg bg-gray-800 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-gray-700"
+              className="w-full h-[48px] rounded-xl text-sm font-semibold tracking-[0.12em] uppercase transition-all duration-200 hover:brightness-110 active:scale-[0.98] shadow-sm"
+              style={{ backgroundColor: "#C07850", color: "#F8EDEB" }}
             >
               Đăng nhập
             </button>
@@ -80,38 +96,40 @@ export default function VerifyEmail() {
 
         {(state === "error" || state === "no-token") && (
           <>
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-100">
-              <svg
-                className="h-7 w-7 text-red-500"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
+            <div
+              className="w-16 h-16 rounded-full flex items-center justify-center mb-6"
+              style={{ backgroundColor: "#3D2B1F" }}
+            >
+              <XCircle size={30} style={{ color: "#F8EDEB" }} />
             </div>
-            <h2 className="mb-2 text-xl font-semibold text-gray-800">
+            <h1
+              className="font-serif text-2xl lg:text-[28px] font-bold mb-2 leading-snug"
+              style={{ color: "#3D2B1F" }}
+            >
               Xác minh thất bại
-            </h2>
-            <p className="mb-6 text-gray-500">
+            </h1>
+            <p className="text-sm mb-8" style={{ color: "#7A5C52" }}>
               {state === "no-token"
                 ? "Liên kết không hợp lệ. Vui lòng kiểm tra lại email của bạn."
                 : errorMessage}
             </p>
+            <div
+              className="w-full"
+              style={{
+                borderTop: "1px solid #E8D5CF",
+                marginBottom: "1.75rem",
+              }}
+            />
             <button
               onClick={() => navigate(ROUTER_URL.PUBLIC.HOME)}
-              className="rounded-lg bg-gray-800 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-gray-700"
+              className="w-full h-[48px] rounded-xl text-sm font-semibold tracking-[0.12em] uppercase transition-all duration-200 hover:brightness-110 active:scale-[0.98] shadow-sm"
+              style={{ backgroundColor: "#3D2B1F", color: "#F8EDEB" }}
             >
               Về trang chủ
             </button>
           </>
         )}
       </div>
-    </div>
+    </AuthShell>
   );
 }
