@@ -9,6 +9,7 @@ export const ROUTER_URL = {
     LOGIN: "/login",
     SIGN_UP: "/register",
     UNAUTHORIZED: "/unauthorized",
+    VERIFY: "/verify-email",
   },
   ADMIN: {
     BASE: "/admin",

@@ -13,6 +13,7 @@ import UserLayout from "@/layouts/user/User.layout";
 import UserHome from "@/pages/user/home";
 import Profile from "@/pages/user/Profile";
 import Setting from "@/pages/user/Setting";
+import VerifyEmail from "@/pages/auth/VerifyEmail";
 
 const MainLayout = lazy(() => import("../../layouts/main/Main.layout"));
 const LoginPage = lazy(() => import("../../pages/auth/login"));
@@ -36,6 +37,10 @@ export const publicRoutes: RouteObject[] = [
   {
     path: ROUTER_URL.AUTH.SIGN_UP.slice(1),
     element: <Register />,
+  },
+  {
+    path: ROUTER_URL.AUTH.VERIFY.slice(1),
+    element: <VerifyEmail />,
   },
   // User pages (for testing — no auth guard)
   {
