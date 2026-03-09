@@ -4,8 +4,12 @@ import { API_PATH } from "../../consts/api.path.const";
 import type {
   getAllPerfumeReq,
   CreatePerfumeReq,
+  GetPerfumeByIdReq,
 } from "../../types/perfume/Perfume.req.type";
-import type { getAllPerfumeRes } from "../../types/perfume/Perfume.res.type";
+import type {
+  getAllPerfumeRes,
+  GetPerfumeByIdRes,
+} from "../../types/perfume/Perfume.res.type";
 
 export const PerfumeService = {
   getAllPerfumes(params: getAllPerfumeReq) {
@@ -19,6 +23,12 @@ export const PerfumeService = {
     return BaseService.post<ResponseSuccess<getAllPerfumeRes>>({
       url: API_PATH.PERFUME.CREATE_PERFUME,
       payload,
+    });
+  },
+
+  getPerfumeById(payload: GetPerfumeByIdReq) {
+    return BaseService.get<ResponseSuccess<GetPerfumeByIdRes>>({
+      url: `${API_PATH.PERFUME.GET_PERFUME_BY_ID}/${payload.id}`,
     });
   },
 };

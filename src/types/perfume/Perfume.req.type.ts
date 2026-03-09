@@ -14,3 +14,7 @@ export interface CreatePerfumeReq {
   targetAudience: string;
   brand: string;
 }
+
+export interface GetPerfumeByIdReq {
+  id: string;
+}

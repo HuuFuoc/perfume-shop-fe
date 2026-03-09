@@ -1,25 +1,66 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { AuthShell } from "../../components/auth/AuthShell";
 import { AuthInput } from "../../components/auth/AuthInput";
 import { ROUTER_URL } from "../../consts/router.path.const";
+import { AuthService } from "../../services/auth/auth.services";
+import { notificationMessage } from "../../utils/helper";
 
 export default function Register() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
   const [confirmError, setConfirmError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // ── Form submit handler ────────────────────────────────────────────
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Client-side password match validation (preserving existing behaviour)
     if (password !== confirm) {
       setConfirmError("Mật khẩu xác nhận không khớp.");
       return;
     }
     setConfirmError("");
-    // TODO: handle register logic
+
+    // Basic required-field check
+    if (!fullName.trim() || !email.trim() || !password.trim() || !dateOfBirth) {
+      notificationMessage("Vui lòng điền đầy đủ thông tin.", "error");
+      return;
+    }
+
+    // Prevent duplicate submits
+    if (loading) return;
+    setLoading(true);
+
+    try {
+      // ── API call: POST /user/register ────────────────────────────────
+      await AuthService.register({
+        name: fullName.trim(),
+        email: email.trim(),
+        password,
+        confirm_password: confirm,
+        date_of_birth: dateOfBirth,
+      });
+
+      notificationMessage(
+        "Đăng ký thành công! Hãy kiểm tra email để xác nhận tài khoản.",
+        "success",
+      );
+
+      // ── Redirect logic ────────────────────────────────────────────
+      // Redirect to login after a short delay so the user can read the toast.
+      setTimeout(() => navigate(ROUTER_URL.AUTH.LOGIN), 1200);
+    } catch {
+      // Error toast is already raised by the base service interceptor.
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -60,6 +101,16 @@ export default function Register() {
         />
 
         <AuthInput
+          label="Ngày sinh"
+          type="date"
+          placeholder=""
+          value={dateOfBirth}
+          onChange={(e) => setDateOfBirth(e.target.value)}
+          required
+          autoComplete="bday"
+        />
+
+        <AuthInput
           label="Mật khẩu"
           type="password"
           placeholder="••••••••"
@@ -85,10 +136,11 @@ export default function Register() {
 
         <button
           type="submit"
-          className="w-full h-[48px] rounded-xl text-sm font-semibold tracking-[0.12em] uppercase mt-1 transition-all duration-200 hover:brightness-110 active:scale-[0.98] shadow-sm"
+          disabled={loading}
+          className="w-full h-[48px] rounded-xl text-sm font-semibold tracking-[0.12em] uppercase mt-1 transition-all duration-200 hover:brightness-110 active:scale-[0.98] shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
           style={{ backgroundColor: "#C07850", color: "#F8EDEB" }}
         >
-          Đăng Ký
+          {loading ? "Đang xử lý..." : "Đăng Ký"}
         </button>
       </form>
 

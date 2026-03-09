@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { Link, useNavigate } from "react-router-dom";
 import { User, Settings, LogOut, ChevronDown } from "lucide-react";
 import { ROUTER_URL } from "../../consts/router.path.const";
+import { removeAuthToken } from "../../utils/cookie";
 
 interface UserAvatarMenuProps {
   displayName?: string;
@@ -74,6 +75,9 @@ export default function UserAvatarMenu({
 
   const handleLogout = () => {
     setOpen(false);
+    // Clear the auth token cookie so the header reverts to guest state
+    removeAuthToken();
+    localStorage.removeItem("userInfo");
     navigate(ROUTER_URL.AUTH.LOGIN);
   };
 

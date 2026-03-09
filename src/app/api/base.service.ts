@@ -14,6 +14,7 @@ import { HttpException } from "../../app/exceptions";
 import { notificationMessage } from "../../utils/helper";
 import { uploadFileToS3 } from "../../utils/upload";
 import { clearLocalStorage } from "../../utils/storage";
+import { getAuthToken, removeAuthToken } from "../../utils/cookie";
 // import { handleUploadFile, deleteFileFromCloudinary } from "../../utils/upload"; // Import the handleUploadFile and deleteFileFromCloudinary functions
 
 export const axiosInstance = axios.create({
@@ -246,7 +247,8 @@ export interface PromiseState<T = unknown> extends AxiosResponse<T> {
 
 axiosInstance.interceptors.request.use(
   (config: AxiosRequestConfig) => {
-    const token = localStorage.getItem("token");
+    // Read access token from cookie (set after login)
+    const token = getAuthToken();
     const userInfo = localStorage.getItem("userInfo");
     if (!config.headers) config.headers = {};
     if (token) {
@@ -276,6 +278,8 @@ axiosInstance.interceptors.response.use(
     if (response) {
       switch (response.status) {
         case HTTP_STATUS.UNAUTHORIZED:
+          // Clear cookie token and local storage on session expiry
+          removeAuthToken();
           clearLocalStorage();
           setTimeout(() => {
             window.location.href = ROUTER_URL.COMMON.HOME;

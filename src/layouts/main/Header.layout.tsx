@@ -1,6 +1,8 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import CardNav from "../../components/common/CardNav";
+import UserAvatarMenu from "../../components/common/UserAvatarMenu";
 import { ROUTER_URL } from "../../consts/router.path.const";
+import { getAuthToken } from "../../utils/cookie";
 
 // ── Palette ─────────────────────────────────────
 const BLUSH = "#F8EDEB";
@@ -97,6 +99,23 @@ const LogoNode = () => (
 const HeaderLayout = () => {
   const wrapperRef = useRef<HTMLDivElement>(null);
 
+  // Check auth token from cookie to conditionally show avatar vs auth buttons
+  const [isLoggedIn, setIsLoggedIn] = useState(() => !!getAuthToken());
+  const [displayName, setDisplayName] = useState("Tài khoản");
+
+  useEffect(() => {
+    setIsLoggedIn(!!getAuthToken());
+    try {
+      const userInfo = localStorage.getItem("userInfo");
+      if (userInfo) {
+        const parsed = JSON.parse(userInfo);
+        setDisplayName(parsed.name || parsed.email || "Tài khoản");
+      }
+    } catch {
+      // ignore parse error
+    }
+  }, []);
+
   // Dynamically adjust the wrapper height as the CardNav expands
   useEffect(() => {
     const wrapper = wrapperRef.current;
@@ -137,15 +156,23 @@ const HeaderLayout = () => {
           items={cardItems}
           baseColor={BLUSH}
           menuColor={BROWN_DARK}
-          buttonBgColor={ROSEWOOD}
-          buttonTextColor={BLUSH}
-          buttonLabel="Đăng Ký"
-          buttonHref={ROUTER_URL.AUTH.SIGN_UP}
-          secondButtonLabel="Đăng Nhập"
-          secondButtonHref={ROUTER_URL.AUTH.LOGIN}
-          secondButtonTextColor="#F8EDEB"
-          secondButtonBgColor="#C07850"
           ease="power3.out"
+          {...(isLoggedIn
+            ? {
+                // Logged in: replace button area with avatar menu
+                rightNode: <UserAvatarMenu displayName={displayName} />,
+              }
+            : {
+                // Guest: show register + login buttons
+                buttonBgColor: ROSEWOOD,
+                buttonTextColor: BLUSH,
+                buttonLabel: "Đăng Ký",
+                buttonHref: ROUTER_URL.AUTH.SIGN_UP,
+                secondButtonLabel: "Đăng Nhập",
+                secondButtonHref: ROUTER_URL.AUTH.LOGIN,
+                secondButtonTextColor: "#F8EDEB",
+                secondButtonBgColor: "#C07850",
+              })}
         />
       </div>
     </>

@@ -1,7 +1,8 @@
 import { lazy } from "react";
 import type { RouteObject } from "react-router-dom";
 import { ROUTER_URL } from "../../consts/router.path.const";
-import Perfume from "../../pages/user/Perfume";
+import Perfume from "../../pages/user/Perfumes";
+import PerfumeDetail from "../../pages/perfume/Perfume";
 import About from "../../pages/user/About";
 import HomePage from "@/pages/user/home";
 import Register from "@/pages/auth/register";
@@ -26,6 +27,10 @@ export const publicRoutes: RouteObject[] = [
     children: [
       { index: true, element: <HomePage /> },
       { path: ROUTER_URL.PUBLIC.PRODUCTS.slice(1), element: <Perfume /> },
+      {
+        path: `${ROUTER_URL.PUBLIC.PRODUCTS.slice(1)}/:id`,
+        element: <PerfumeDetail />,
+      },
       { path: ROUTER_URL.PUBLIC.ABOUT.slice(1), element: <About /> },
     ],
   },

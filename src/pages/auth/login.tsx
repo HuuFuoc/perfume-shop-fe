@@ -1,17 +1,66 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { AuthShell } from "../../components/auth/AuthShell";
 import { AuthInput } from "../../components/auth/AuthInput";
 import { ROUTER_URL } from "../../consts/router.path.const";
+import { AuthService } from "../../services/auth/auth.services";
+import { setAuthToken } from "../../utils/cookie";
+import { notificationMessage } from "../../utils/helper";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // ── Form submit handler ────────────────────────────────────────────
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: handle login logic
+
+    // Basic client-side validation
+    if (!email.trim() || !password.trim()) {
+      notificationMessage("Vui lòng nhập email và mật khẩu.", "error");
+      return;
+    }
+
+    // Prevent duplicate submits
+    if (loading) return;
+    setLoading(true);
+
+    try {
+      // ── API call: POST /user/login ────────────────────────────────────
+      const res = await AuthService.login({ email: email.trim(), password });
+      // Backend returns { message, result: { access_token, refresh_token } }
+      const token = res.data.result?.access_token;
+
+      if (token) {
+        // ── Cookie token storage ───────────────────────────────────────
+        // Persists the JWT in a cookie so all subsequent API requests
+        // (via base.service.ts interceptor) automatically include it.
+        setAuthToken(token);
+
+        // Persist user info for UI display (header, avatar, etc.)
+        // res.data.result does not include a user object in the current backend
+        // contract; this block is a safe no-op until the backend extends it.
+        // if (res.data.result?.user) {
+        //   localStorage.setItem("userInfo", JSON.stringify(res.data.result.user));
+        // }
+
+        notificationMessage("Đăng nhập thành công!", "success");
+
+        // ── Redirect logic ────────────────────────────────────────────
+        // Navigate to the user dashboard after a brief moment so the toast is visible.
+        setTimeout(() => navigate(ROUTER_URL.USER.BASE), 800);
+      } else {
+        notificationMessage("Đăng nhập thất bại. Vui lòng thử lại.", "error");
+      }
+    } catch {
+      // Error toast is already shown by the base service interceptor;
+      // no duplicate message needed here.
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -64,10 +113,11 @@ export default function Login() {
 
         <button
           type="submit"
-          className="w-full h-[48px] rounded-xl text-sm font-semibold tracking-[0.12em] uppercase mt-1 transition-all duration-200 hover:brightness-110 active:scale-[0.98] shadow-sm"
+          disabled={loading}
+          className="w-full h-[48px] rounded-xl text-sm font-semibold tracking-[0.12em] uppercase mt-1 transition-all duration-200 hover:brightness-110 active:scale-[0.98] shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
           style={{ backgroundColor: "#C07850", color: "#F8EDEB" }}
         >
-          Đăng Nhập
+          {loading ? "Đang xử lý..." : "Đăng Nhập"}
         </button>
       </form>
 
