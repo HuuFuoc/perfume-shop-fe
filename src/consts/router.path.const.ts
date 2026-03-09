@@ -19,7 +19,7 @@ export const ROUTER_URL = {
   },
   USER: {
     BASE: "/app",
-    HOME: "",
+    HOME: "/",
     PROFILE: "/profile",
     SETTING: "/setting",
   },

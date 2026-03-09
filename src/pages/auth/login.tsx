@@ -51,7 +51,7 @@ export default function Login() {
 
         // ── Redirect logic ────────────────────────────────────────────
         // Navigate to the user dashboard after a brief moment so the toast is visible.
-        setTimeout(() => navigate(ROUTER_URL.USER.BASE), 800);
+        setTimeout(() => navigate(ROUTER_URL.USER.HOME), 800);
       } else {
         notificationMessage("Đăng nhập thất bại. Vui lòng thử lại.", "error");
       }

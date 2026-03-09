@@ -1,11 +1,11 @@
 import { Outlet } from "react-router-dom";
-import UserHeaderLayout from "./UserHeader.layout";
 import FooterLayout from "../main/Footer.layout";
+import HeaderLayout from "../main/Header.layout";
 
 export default function UserLayout() {
   return (
     <div className="flex flex-col min-h-screen bg-blush">
-      <UserHeaderLayout />
+      <HeaderLayout />
 
       <main className="flex-grow">
         <Outlet />
