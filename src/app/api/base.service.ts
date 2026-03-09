@@ -200,10 +200,10 @@ export const BaseService = {
 
       console.log("Uploading file:", file.name, file.type, file.size);
 
-      const url = await uploadFileToS3(file);
-      if (url) {
+      const result = await uploadFileToS3(file);
+      if (result.url) {
         notificationMessage("File uploaded successfully");
-        return url;
+        return result.url;
       } else {
         throw new Error("Upload failed");
       }

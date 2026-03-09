@@ -4,17 +4,28 @@ import {
   DeleteObjectCommand,
   type PutObjectCommandInput,
 } from "@aws-sdk/client-s3";
+import { fromCognitoIdentityPool } from "@aws-sdk/credential-providers";
 import { notificationMessage } from "./helper";
 
-// Configure AWS S3
+const REGION = import.meta.env.VITE_AWS_REGION as string;
+const BUCKET_NAME = import.meta.env.VITE_S3_BUCKET_NAME as string;
+const IDENTITY_POOL_ID = import.meta.env
+  .VITE_COGNITO_IDENTITY_POOL_ID as string;
+
+// Configure AWS S3 using Cognito Identity Pool (no hardcoded credentials)
 const getS3Client = () => {
   return new S3Client({
-    region: import.meta.env.VITE_AWS_REGION,
-    credentials: {
-      accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID,
-      secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY,
-    },
+    region: REGION,
+    credentials: fromCognitoIdentityPool({
+      clientConfig: { region: REGION },
+      identityPoolId: IDENTITY_POOL_ID,
+    }),
   });
+};
+
+export const createS3Key = (file: File): string => {
+  const ext = file.name.split(".").pop() ?? "jpg";
+  return `uploads/${Date.now()}-${crypto.randomUUID()}.${ext}`;
 };
 
 /**
@@ -37,40 +48,28 @@ const fileToUint8Array = (file: File): Promise<Uint8Array> => {
   });
 };
 
-/**
- * Upload file to AWS S3
- * @param file File to upload
- * @param folder Folder path in S3 bucket (optional)
- * @returns Promise with the uploaded file URL
- */
-export const uploadFileToS3 = async (
-  file: File,
-  folder: string = "profile-pictures",
-): Promise<string> => {
+export type UploadedS3File = {
+  key: string;
+  url: string;
+};
+
+export const uploadFileToS3 = async (file: File): Promise<UploadedS3File> => {
   try {
     const s3Client = getS3Client();
-    const fileExtension = file.name.split(".").pop();
-    const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).substring(2, 15)}.${fileExtension}`;
-
-    // Use FileReader instead of arrayBuffer
+    const key = createS3Key(file);
     const fileData = await fileToUint8Array(file);
 
     const params: PutObjectCommandInput = {
-      Bucket: import.meta.env.VITE_S3_BUCKET_NAME as string,
-      Key: fileName,
+      Bucket: BUCKET_NAME,
+      Key: key,
       Body: fileData,
       ContentType: file.type,
-      ACL: "public-read",
     };
 
     await s3Client.send(new PutObjectCommand(params));
 
-    // Construct the URL
-    const bucketRegion = import.meta.env.VITE_AWS_REGION;
-    const bucketName = import.meta.env.VITE_S3_BUCKET_NAME;
-    const fileUrl = `https://${bucketName}.s3.${bucketRegion}.amazonaws.com/${fileName}`;
-
-    return fileUrl;
+    const url = `https://${BUCKET_NAME}.s3.${REGION}.amazonaws.com/${key}`;
+    return { key, url };
   } catch (error) {
     console.error("Error uploading file to S3:", error);
     notificationMessage("Failed to upload file. Please try again.", "error");
@@ -78,24 +77,16 @@ export const uploadFileToS3 = async (
   }
 };
 
-/**
- * Delete file from AWS S3
- * @param fileUrl Full URL of the file to delete
- * @returns Promise with deletion status
- */
-export const deleteFileFromS3 = async (fileUrl: string): Promise<boolean> => {
+export const deleteFileFromS3 = async (key: string): Promise<boolean> => {
   try {
     const s3Client = getS3Client();
-    // Extract key from URL
-    const urlParts = fileUrl.split("/");
-    const key = urlParts.slice(3).join("/");
 
-    const params = {
-      Bucket: import.meta.env.VITE_S3_BUCKET_NAME as string,
-      Key: key,
-    };
-
-    await s3Client.send(new DeleteObjectCommand(params));
+    await s3Client.send(
+      new DeleteObjectCommand({
+        Bucket: BUCKET_NAME,
+        Key: key,
+      }),
+    );
     return true;
   } catch (error) {
     console.error("Error deleting file from S3:", error);
