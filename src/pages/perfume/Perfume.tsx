@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { PerfumeService } from "../../services/perfume/perfume.services";
+import { BrandService } from "../../services/brand/brand.services";
 import type { PerfumeRes } from "../../types/perfume/Perfume.res.type";
 import { notificationMessage } from "../../utils/helper";
 
@@ -123,6 +124,20 @@ export default function PerfumeDetailPage() {
   const [perfume, setPerfume] = useState<PerfumeWithComments | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [brandMap, setBrandMap] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    BrandService.getAllBrands()
+      .then((res) => {
+        const map = Object.fromEntries(
+          (res.data?.data ?? []).map(
+            (b: { _id: string; brandName: string }) => [b._id, b.brandName],
+          ),
+        );
+        setBrandMap(map);
+      })
+      .catch(() => {});
+  }, []);
 
   // Comment form
   const [commentContent, setCommentContent] = useState("");
@@ -169,7 +184,8 @@ export default function PerfumeDetailPage() {
       })
       .catch((err) => {
         setCommentError(
-          err.response?.data?.message ?? "Gửi đánh giá thất bại. Vui lòng thử lại.",
+          err.response?.data?.message ??
+            "Gửi đánh giá thất bại. Vui lòng thử lại.",
         );
       })
       .finally(() => setCommentSubmitting(false));
@@ -290,7 +306,8 @@ export default function PerfumeDetailPage() {
           <div className="flex items-center gap-3">
             <div className="h-px w-7 bg-rosewood/40" />
             <span className="text-[10px] tracking-[0.42em] text-rosewood uppercase font-semibold">
-              {perfume.brand ?? "Thương hiệu độc lập"}
+              {(perfume.brand && brandMap[perfume.brand]) ??
+                "Thương hiệu độc lập"}
             </span>
           </div>
 
@@ -439,7 +456,10 @@ export default function PerfumeDetailPage() {
               </div>
             </div>
             <div>
-              <label htmlFor="comment-content" className="mb-2 block text-xs font-medium text-brown-dark">
+              <label
+                htmlFor="comment-content"
+                className="mb-2 block text-xs font-medium text-brown-dark"
+              >
                 Nội dung
               </label>
               <textarea

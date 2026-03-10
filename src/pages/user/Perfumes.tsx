@@ -112,9 +112,11 @@ function hasMeaningfulDescription(desc: string | undefined): boolean {
 // ── Product Card: cao cấp, tối giản; không hiển thị type/concentration ──
 function PerfumeCard({
   perfume,
+  brandName,
   onClick,
 }: {
   perfume: PerfumeRes;
+  brandName?: string;
   onClick: () => void;
 }) {
   const showDesc = hasMeaningfulDescription(perfume.description);
@@ -166,12 +168,12 @@ function PerfumeCard({
           >
             {perfume.perfumeName}
           </h3>
-          {perfume.brand && (
+          {brandName && (
             <p
               className="text-[11px] tracking-[0.2em] uppercase"
               style={{ color: BROWN_MUTED }}
             >
-              {perfume.brand}
+              {brandName}
             </p>
           )}
         </div>
@@ -213,7 +215,10 @@ function PerfumeCard({
         </div>
 
         {/* Giá nổi bật + CTA */}
-        <div className="mt-auto pt-4 border-t flex items-end justify-between gap-3" style={{ borderColor: BORDER_SOFT }}>
+        <div
+          className="mt-auto pt-4 border-t flex items-end justify-between gap-3"
+          style={{ borderColor: BORDER_SOFT }}
+        >
           <div className="flex flex-col">
             <span
               className="text-[10px] tracking-[0.2em] uppercase mb-0.5"
@@ -371,6 +376,8 @@ export default function Perfume() {
   const [brands, setBrands] = useState<BrandOption[]>([]);
   const navigate = useNavigate();
 
+  const brandMap = Object.fromEntries(brands.map((b) => [b._id, b.brandName]));
+
   useEffect(() => {
     BrandService.getAllBrands()
       .then((res) => setBrands(res.data?.data ?? []))
@@ -511,6 +518,7 @@ export default function Perfume() {
               <PerfumeCard
                 key={perfume._id ?? idx}
                 perfume={perfume}
+                brandName={perfume.brand ? brandMap[perfume.brand] : undefined}
                 onClick={() => navigate(`/perfumes/${perfume._id}`)}
               />
             ))}

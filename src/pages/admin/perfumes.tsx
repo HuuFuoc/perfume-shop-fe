@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ImageIcon, Plus, Upload, X } from "lucide-react";
+import { ImageIcon, Plus, X } from "lucide-react";
 import { PerfumeService } from "../../services/perfume/perfume.services";
 import { BrandService } from "../../services/brand/brand.services";
 import { useS3Upload } from "../../hooks/useS3Upload";
@@ -49,13 +49,53 @@ const TEXT_FIELDS = [
     required: true,
   },
   { name: "volume", label: "Dung tích (ml)", type: "number", required: true },
-  {
-    name: "targetAudience",
-    label: "Đối tượng",
-    type: "text",
-    required: true,
-  },
 ] as const;
+
+// ─────────────────────────────────────────────────────────────────
+// Shared: TargetAudienceSelect
+// ─────────────────────────────────────────────────────────────────
+const TARGET_AUDIENCE_OPTIONS = [
+  { value: "Male", label: "Nam (Male)" },
+  { value: "Female", label: "Nữ (Female)" },
+  { value: "Unisex", label: "Unisex" },
+];
+
+function TargetAudienceSelect({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div>
+      <label
+        className="mb-1 block text-xs font-semibold uppercase tracking-wider"
+        style={{ color: ADMIN_MUTED }}
+      >
+        Đối tượng *
+      </label>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        required
+        className="w-full rounded-lg border px-3 py-2 text-sm outline-none transition-colors focus:border-[#C07850]"
+        style={{
+          borderColor: ADMIN_BORDER_SOFT,
+          backgroundColor: "#fff",
+          color: value ? ADMIN_BROWN_DARK : ADMIN_MUTED,
+        }}
+      >
+        <option value="">— Chọn đối tượng —</option>
+        {TARGET_AUDIENCE_OPTIONS.map((opt) => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
 
 // ─────────────────────────────────────────────────────────────────
 // Shared: ImageUploadField
@@ -64,19 +104,15 @@ function ImageUploadField({
   previewUrl,
   uploadedImage,
   uploadError,
-  selectedFile,
   isUploading,
   onSelectFile,
-  onUpload,
   onDelete,
 }: {
   previewUrl: string | null;
   uploadedImage: { url: string; key: string } | null;
   uploadError: string | null;
-  selectedFile: File | null;
   isUploading: boolean;
   onSelectFile: (file: File | null) => void;
-  onUpload: () => void;
   onDelete: () => void;
 }) {
   return (
@@ -107,7 +143,14 @@ function ImageUploadField({
             <span className="text-xs">JPG / PNG / WEBP, tối đa 5 MB</span>
           </div>
         )}
-        {uploadedImage && (
+        {isUploading && (
+          <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-black/30">
+            <span className="text-xs font-semibold text-white">
+              Đang upload...
+            </span>
+          </div>
+        )}
+        {uploadedImage && !isUploading && (
           <span
             className="absolute right-2 top-2 rounded-full px-2 py-0.5 text-[10px] font-semibold"
             style={{ backgroundColor: "#22c55e", color: "#fff" }}
@@ -127,24 +170,19 @@ function ImageUploadField({
           style={{ borderColor: ADMIN_BORDER_SOFT, color: ADMIN_BROWN_DARK }}
         >
           <ImageIcon size={13} />
-          Chọn ảnh
+          {isUploading
+            ? "Đang upload..."
+            : uploadedImage
+              ? "Đổi ảnh"
+              : "Chọn ảnh"}
           <input
             type="file"
             accept="image/*"
             className="hidden"
+            disabled={isUploading}
             onChange={(e) => onSelectFile(e.target.files?.[0] ?? null)}
           />
         </label>
-        <button
-          type="button"
-          onClick={onUpload}
-          disabled={!selectedFile || isUploading || !!uploadedImage}
-          className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40"
-          style={{ backgroundColor: ADMIN_ROSEWOOD }}
-        >
-          <Upload size={13} />
-          {isUploading ? "Đang upload..." : "Upload ảnh"}
-        </button>
         {uploadedImage && (
           <button
             type="button"
@@ -239,10 +277,13 @@ function PerfumeCreateForm({ onClose }: { onClose: () => void }) {
     }));
   };
 
-  const handleUploadImage = async () => {
-    const result = await handleUpload();
-    if (result) setForm((prev) => ({ ...prev, uri: result.url }));
-  };
+  // Auto-upload when file is selected
+  useEffect(() => {
+    if (!selectedFile) return;
+    handleUpload().then((result) => {
+      if (result) setForm((prev) => ({ ...prev, uri: result.url }));
+    });
+  }, [selectedFile]);
 
   const handleDeleteImage = async () => {
     await handleDelete();
@@ -291,10 +332,8 @@ function PerfumeCreateForm({ onClose }: { onClose: () => void }) {
             previewUrl={previewUrl}
             uploadedImage={uploadedImage}
             uploadError={uploadError}
-            selectedFile={selectedFile}
             isUploading={isUploading}
             onSelectFile={handleSelectFile}
-            onUpload={handleUploadImage}
             onDelete={handleDeleteImage}
           />
 
@@ -324,7 +363,10 @@ function PerfumeCreateForm({ onClose }: { onClose: () => void }) {
               />
             </div>
           ))}
-
+          <TargetAudienceSelect
+            value={form.targetAudience}
+            onChange={(v) => setForm((p) => ({ ...p, targetAudience: v }))}
+          />
           <div>
             <label
               htmlFor="create-description"
@@ -378,13 +420,19 @@ function PerfumeCreateForm({ onClose }: { onClose: () => void }) {
 
           <div
             className="sticky bottom-0 flex shrink-0 gap-3 border-t pt-4"
-            style={{ borderColor: ADMIN_BORDER_SOFT, backgroundColor: ADMIN_PANEL_BG }}
+            style={{
+              borderColor: ADMIN_BORDER_SOFT,
+              backgroundColor: ADMIN_PANEL_BG,
+            }}
           >
             <button
               type="button"
               onClick={onClose}
               className="flex-1 rounded-lg border py-2 text-sm font-medium transition-colors hover:bg-black/5"
-              style={{ borderColor: ADMIN_BORDER_SOFT, color: ADMIN_BROWN_DARK }}
+              style={{
+                borderColor: ADMIN_BORDER_SOFT,
+                color: ADMIN_BROWN_DARK,
+              }}
             >
               Hủy
             </button>
@@ -452,10 +500,13 @@ function PerfumeEditForm({
     }));
   };
 
-  const handleUploadImage = async () => {
-    const result = await handleUpload();
-    if (result) setForm((prev) => ({ ...prev, uri: result.url }));
-  };
+  // Auto-upload when file is selected
+  useEffect(() => {
+    if (!selectedFile) return;
+    handleUpload().then((result) => {
+      if (result) setForm((prev) => ({ ...prev, uri: result.url }));
+    });
+  }, [selectedFile]);
 
   const handleDeleteImage = async () => {
     await handleDelete();
@@ -503,10 +554,8 @@ function PerfumeEditForm({
             previewUrl={displayPreview}
             uploadedImage={uploadedImage}
             uploadError={uploadError}
-            selectedFile={selectedFile}
             isUploading={isUploading}
             onSelectFile={handleSelectFile}
-            onUpload={handleUploadImage}
             onDelete={handleDeleteImage}
           />
 
@@ -536,6 +585,11 @@ function PerfumeEditForm({
               />
             </div>
           ))}
+
+          <TargetAudienceSelect
+            value={form.targetAudience}
+            onChange={(v) => setForm((p) => ({ ...p, targetAudience: v }))}
+          />
 
           <div>
             <label
@@ -590,13 +644,19 @@ function PerfumeEditForm({
 
           <div
             className="sticky bottom-0 flex shrink-0 gap-3 border-t pt-4"
-            style={{ borderColor: ADMIN_BORDER_SOFT, backgroundColor: ADMIN_PANEL_BG }}
+            style={{
+              borderColor: ADMIN_BORDER_SOFT,
+              backgroundColor: ADMIN_PANEL_BG,
+            }}
           >
             <button
               type="button"
               onClick={onClose}
               className="flex-1 rounded-lg border py-2 text-sm font-medium transition-colors hover:bg-black/5"
-              style={{ borderColor: ADMIN_BORDER_SOFT, color: ADMIN_BROWN_DARK }}
+              style={{
+                borderColor: ADMIN_BORDER_SOFT,
+                color: ADMIN_BROWN_DARK,
+              }}
             >
               Hủy
             </button>
@@ -657,7 +717,9 @@ function PerfumeList({
   if (perfumes.length === 0) {
     return (
       <div className="py-16 text-center text-sm" style={{ color: ADMIN_MUTED }}>
-        {search.trim() || brandId ? "Không có sản phẩm nào phù hợp bộ lọc." : "Chưa có sản phẩm nào."}
+        {search.trim() || brandId
+          ? "Không có sản phẩm nào phù hợp bộ lọc."
+          : "Chưa có sản phẩm nào."}
       </div>
     );
   }
@@ -709,8 +771,11 @@ function PerfumeList({
                         e.currentTarget.style.display = "none";
                         const parent = e.currentTarget.parentElement;
                         if (parent) {
-                          const fallback = parent.querySelector(".perfume-img-fallback");
-                          if (fallback) (fallback as HTMLElement).style.display = "flex";
+                          const fallback = parent.querySelector(
+                            ".perfume-img-fallback",
+                          );
+                          if (fallback)
+                            (fallback as HTMLElement).style.display = "flex";
                         }
                       }}
                     />
@@ -728,7 +793,10 @@ function PerfumeList({
                 </div>
               </td>
               <td className="px-5 py-3.5">
-                <span className="font-semibold" style={{ color: ADMIN_BROWN_DARK }}>
+                <span
+                  className="font-semibold"
+                  style={{ color: ADMIN_BROWN_DARK }}
+                >
                   {p.perfumeName || "—"}
                 </span>
               </td>
@@ -745,7 +813,12 @@ function PerfumeList({
                 <AdminActionButtons
                   onEdit={() => onEdit(p)}
                   onDelete={() => {
-                    if (!window.confirm("Bạn có chắc muốn xóa nước hoa này không?")) return;
+                    if (
+                      !window.confirm(
+                        "Bạn có chắc muốn xóa nước hoa này không?",
+                      )
+                    )
+                      return;
                     deletePerfume(p._id);
                   }}
                   deleteDisabled={isDeleting}
@@ -776,7 +849,10 @@ function AdminPerfumeFilters({
   return (
     <div
       className="flex flex-col sm:flex-row gap-3 mb-4 p-4 rounded-2xl border"
-      style={{ borderColor: ADMIN_BORDER_SOFT, backgroundColor: "rgba(255,255,255,0.7)" }}
+      style={{
+        borderColor: ADMIN_BORDER_SOFT,
+        backgroundColor: "rgba(255,255,255,0.7)",
+      }}
     >
       <input
         type="text"
@@ -790,7 +866,11 @@ function AdminPerfumeFilters({
         value={brandId}
         onChange={(e) => onBrandChange(e.target.value)}
         className="rounded-xl border px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-rosewood/20 min-w-[180px]"
-        style={{ borderColor: ADMIN_BORDER_SOFT, color: ADMIN_BROWN_DARK, backgroundColor: "#fff" }}
+        style={{
+          borderColor: ADMIN_BORDER_SOFT,
+          color: ADMIN_BROWN_DARK,
+          backgroundColor: "#fff",
+        }}
       >
         <option value="">Tất cả thương hiệu</option>
         {brandOptions.map((b) => (
@@ -848,7 +928,11 @@ export default function Perfumes() {
       />
 
       <AdminTableWrapper>
-        <PerfumeList onEdit={setEditingPerfume} search={search} brandId={brandId} />
+        <PerfumeList
+          onEdit={setEditingPerfume}
+          search={search}
+          brandId={brandId}
+        />
       </AdminTableWrapper>
 
       {/* ── Create drawer ── */}
