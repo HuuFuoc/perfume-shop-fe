@@ -13,8 +13,11 @@ import { HTTP_STATUS } from "../../app/enums";
 import { HttpException } from "../../app/exceptions";
 import { notificationMessage } from "../../utils/helper";
 import { uploadFileToS3 } from "../../utils/upload";
-import { clearLocalStorage } from "../../utils/storage";
-import { getAuthToken, removeAuthToken } from "../../utils/cookie";
+import {
+  getAuthToken,
+  getTokenPayload,
+  removeAuthToken,
+} from "../../utils/cookie";
 // import { handleUploadFile, deleteFileFromCloudinary } from "../../utils/upload"; // Import the handleUploadFile and deleteFileFromCloudinary functions
 
 export const axiosInstance = axios.create({
@@ -249,14 +252,13 @@ axiosInstance.interceptors.request.use(
   (config: AxiosRequestConfig) => {
     // Read access token from cookie (set after login)
     const token = getAuthToken();
-    const userInfo = localStorage.getItem("userInfo");
     if (!config.headers) config.headers = {};
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }
-    if (userInfo) {
-      const parsedUserInfo = JSON.parse(userInfo);
-      config.headers["User-Id"] = parsedUserInfo._id; // debug add user id
+    const payload = getTokenPayload<{ user_id?: string }>();
+    if (payload?.user_id) {
+      config.headers["User-Id"] = payload.user_id;
     }
     store.dispatch(toggleLoading(true)); // Show loading
     return config as InternalAxiosRequestConfig;
@@ -278,9 +280,8 @@ axiosInstance.interceptors.response.use(
     if (response) {
       switch (response.status) {
         case HTTP_STATUS.UNAUTHORIZED:
-          // Clear cookie token and local storage on session expiry
+          // Clear cookie token on session expiry
           removeAuthToken();
-          clearLocalStorage();
           setTimeout(() => {
             window.location.href = ROUTER_URL.COMMON.HOME;
           }, 3000);

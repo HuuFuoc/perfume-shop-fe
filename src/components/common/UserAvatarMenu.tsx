@@ -1,13 +1,20 @@
 import { useRef, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { Link, useNavigate } from "react-router-dom";
-import { User, Settings, LogOut, ChevronDown } from "lucide-react";
+import {
+  User,
+  Settings,
+  LogOut,
+  ChevronDown,
+  LayoutDashboard,
+} from "lucide-react";
 import { ROUTER_URL } from "../../consts/router.path.const";
 import { removeAuthToken } from "../../utils/cookie";
 
 interface UserAvatarMenuProps {
   displayName?: string;
   avatarUrl?: string;
+  isAdmin?: boolean;
 }
 
 const ROSEWOOD = "#C07850";
@@ -31,6 +38,7 @@ const menuItems = [
 export default function UserAvatarMenu({
   displayName = "Khách",
   avatarUrl,
+  isAdmin = false,
 }: UserAvatarMenuProps) {
   const [open, setOpen] = useState(false);
   const [dropdownStyle, setDropdownStyle] = useState<React.CSSProperties>({});
@@ -77,7 +85,6 @@ export default function UserAvatarMenu({
     setOpen(false);
     // Clear the auth token cookie so the header reverts to guest state
     removeAuthToken();
-    localStorage.removeItem("userInfo");
     navigate(ROUTER_URL.AUTH.LOGIN);
   };
 
@@ -101,6 +108,17 @@ export default function UserAvatarMenu({
       </div>
 
       <div className="py-1.5">
+        {isAdmin && (
+          <Link
+            to={ROUTER_URL.ADMIN.BASE + ROUTER_URL.ADMIN.DASHBOARD}
+            onClick={() => setOpen(false)}
+            className="flex items-center gap-2.5 px-4 py-2.5 text-sm transition-colors duration-150 hover:bg-[#FCD5CE]/40"
+            style={{ color: BROWN_DARK }}
+          >
+            <LayoutDashboard size={15} style={{ color: ROSEWOOD }} />
+            Admin Dashboard
+          </Link>
+        )}
         {menuItems.map(({ icon: Icon, label, href }) => (
           <Link
             key={label}

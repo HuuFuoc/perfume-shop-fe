@@ -5,7 +5,7 @@ import { AuthShell } from "../../components/auth/AuthShell";
 import { AuthInput } from "../../components/auth/AuthInput";
 import { ROUTER_URL } from "../../consts/router.path.const";
 import { AuthService } from "../../services/auth/auth.services";
-import { setAuthToken } from "../../utils/cookie";
+import { setAuthToken, getRoleFromToken, TOKEN_ROLE } from "../../utils/cookie";
 import { notificationMessage } from "../../utils/helper";
 
 export default function Login() {
@@ -40,18 +40,20 @@ export default function Login() {
         // (via base.service.ts interceptor) automatically include it.
         setAuthToken(token);
 
-        // Persist user info for UI display (header, avatar, etc.)
-        // res.data.result does not include a user object in the current backend
-        // contract; this block is a safe no-op until the backend extends it.
-        // if (res.data.result?.user) {
-        //   localStorage.setItem("userInfo", JSON.stringify(res.data.result.user));
-        // }
-
         notificationMessage("Đăng nhập thành công!", "success");
 
         // ── Redirect logic ────────────────────────────────────────────
-        // Navigate to the user dashboard after a brief moment so the toast is visible.
-        setTimeout(() => navigate(ROUTER_URL.USER.HOME), 800);
+        // Decode the JWT role (number) and send admins to /admin, users to home.
+        const role = getRoleFromToken();
+        setTimeout(
+          () =>
+            navigate(
+              role === TOKEN_ROLE.ADMIN
+                ? ROUTER_URL.ADMIN.BASE
+                : ROUTER_URL.USER.HOME,
+            ),
+          800,
+        );
       } else {
         notificationMessage("Đăng nhập thất bại. Vui lòng thử lại.", "error");
       }

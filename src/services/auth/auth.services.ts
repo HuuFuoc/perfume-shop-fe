@@ -2,6 +2,27 @@ import { BaseService } from "../../app/api/base.service";
 import type { ResponseSuccess } from "../../app/interface";
 import { API_PATH } from "../../consts/api.path.const";
 
+/** Current user profile returned by POST /user/get-me */
+export interface UserProfile {
+  _id: string;
+  name: string;
+  email: string;
+  date_of_birth: string;
+  bio?: string;
+  location?: string;
+  website?: string;
+  username?: string;
+  avatar?: string;
+  cover_photo?: string;
+  role?: number | string;
+  verify?: number;
+}
+
+export interface GetMeResponse {
+  message: string;
+  data: UserProfile;
+}
+
 // ── Auth request / response types ────────────────────────────────────────────
 export interface LoginReq {
   email: string;
@@ -61,6 +82,15 @@ export const AuthService = {
     return BaseService.get<ResponseSuccess<null>>({
       url: API_PATH.AUTH.VERIFY_EMAIL,
       payload: { email_verify_token },
+      isLoading: false,
+    });
+  },
+
+  /** POST /user/get-me — get current user (requires auth token) */
+  getMe() {
+    return BaseService.post<GetMeResponse>({
+      url: API_PATH.USER.GET_ME,
+      payload: {},
       isLoading: false,
     });
   },

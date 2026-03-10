@@ -1,4 +1,4 @@
-export interface getAllPerfumeReq {
+export interface GetAllPerfumesReq {
   pageSize?: string;
   pageNumber?: string;
 }
@@ -15,6 +15,20 @@ export interface CreatePerfumeReq {
   brand: string;
 }
 
+export interface UpdatePerfumeReq extends CreatePerfumeReq {
+  id: string;
+}
+
 export interface GetPerfumeByIdReq {
   id: string;
+}
+
+export interface DeletePerfumeReq {
+  id: string;
+}
+
+export interface CreateCommentReq {
+  id: string;
+  content: string;
+  rating: number;
 }

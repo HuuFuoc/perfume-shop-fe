@@ -4,9 +4,13 @@ export const API_PATH = {
     LOGIN: "/user/login",
     REGISTER: "/user/register",
   },
+  USER: {
+    GET_ME: "/user/get-me",
+  },
   PERFUME: {
-    GET_ALL_PERFUMES: "/perfumes",
-    CREATE_PERFUME: "/perfumes",
-    GET_PERFUME_BY_ID: "/perfumes",
+    BASE: "/perfumes",
+  },
+  BRAND: {
+    BASE: "/brands",
   },
 };

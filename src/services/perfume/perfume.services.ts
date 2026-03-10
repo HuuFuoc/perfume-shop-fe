@@ -1,34 +1,60 @@
 import { BaseService } from "../../app/api/base.service";
-import type { ResponseSuccess } from "../../app/interface";
 import { API_PATH } from "../../consts/api.path.const";
 import type {
-  getAllPerfumeReq,
+  GetAllPerfumesReq,
   CreatePerfumeReq,
+  UpdatePerfumeReq,
   GetPerfumeByIdReq,
+  DeletePerfumeReq,
+  CreateCommentReq,
 } from "../../types/perfume/Perfume.req.type";
 import type {
-  getAllPerfumeRes,
+  GetAllPerfumesRes,
   GetPerfumeByIdRes,
+  CreatePerfumeRes,
+  UpdatePerfumeRes,
+  DeletePerfumeRes,
+  CreateCommentRes,
 } from "../../types/perfume/Perfume.res.type";
 
 export const PerfumeService = {
-  getAllPerfumes(params: getAllPerfumeReq) {
-    return BaseService.get<ResponseSuccess<getAllPerfumeRes[]>>({
-      url: API_PATH.PERFUME.GET_ALL_PERFUMES,
+  getAllPerfumes(params?: GetAllPerfumesReq) {
+    return BaseService.get<GetAllPerfumesRes>({
+      url: API_PATH.PERFUME.BASE,
       payload: params,
     });
   },
 
+  getPerfumeById({ id }: GetPerfumeByIdReq) {
+    return BaseService.get<GetPerfumeByIdRes>({
+      url: `${API_PATH.PERFUME.BASE}/${id}`,
+    });
+  },
+
   createPerfume(payload: CreatePerfumeReq) {
-    return BaseService.post<ResponseSuccess<getAllPerfumeRes>>({
-      url: API_PATH.PERFUME.CREATE_PERFUME,
+    return BaseService.post<CreatePerfumeRes>({
+      url: API_PATH.PERFUME.BASE,
       payload,
     });
   },
 
-  getPerfumeById(payload: GetPerfumeByIdReq) {
-    return BaseService.get<ResponseSuccess<GetPerfumeByIdRes>>({
-      url: `${API_PATH.PERFUME.GET_PERFUME_BY_ID}/${payload.id}`,
+  updatePerfume({ id, ...payload }: UpdatePerfumeReq) {
+    return BaseService.put<UpdatePerfumeRes>({
+      url: `${API_PATH.PERFUME.BASE}/${id}`,
+      payload,
+    });
+  },
+
+  deletePerfume({ id }: DeletePerfumeReq) {
+    return BaseService.remove<DeletePerfumeRes>({
+      url: `${API_PATH.PERFUME.BASE}/${id}`,
+    });
+  },
+
+  createComment({ id, content, rating }: CreateCommentReq) {
+    return BaseService.post<CreateCommentRes>({
+      url: `${API_PATH.PERFUME.BASE}/${id}/comments`,
+      payload: { content, rating },
     });
   },
 };

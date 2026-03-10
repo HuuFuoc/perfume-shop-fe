@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import CardNav from "../../components/common/CardNav";
 import UserAvatarMenu from "../../components/common/UserAvatarMenu";
 import { ROUTER_URL } from "../../consts/router.path.const";
-import { getAuthToken } from "../../utils/cookie";
+import { getAuthToken, getRoleFromToken, TOKEN_ROLE } from "../../utils/cookie";
 
 // ── Palette ─────────────────────────────────────
 const BLUSH = "#F8EDEB";
@@ -101,19 +101,14 @@ const HeaderLayout = () => {
 
   // Check auth token from cookie to conditionally show avatar vs auth buttons
   const [isLoggedIn, setIsLoggedIn] = useState(() => !!getAuthToken());
-  const [displayName, setDisplayName] = useState("Tài khoản");
+  const [isAdmin, setIsAdmin] = useState(
+    () => getRoleFromToken() === TOKEN_ROLE.ADMIN,
+  );
+  const [displayName] = useState("Tài khoản");
 
   useEffect(() => {
     setIsLoggedIn(!!getAuthToken());
-    try {
-      const userInfo = localStorage.getItem("userInfo");
-      if (userInfo) {
-        const parsed = JSON.parse(userInfo);
-        setDisplayName(parsed.name || parsed.email || "Tài khoản");
-      }
-    } catch {
-      // ignore parse error
-    }
+    setIsAdmin(getRoleFromToken() === TOKEN_ROLE.ADMIN);
   }, []);
 
   // Dynamically adjust the wrapper height as the CardNav expands
@@ -160,7 +155,9 @@ const HeaderLayout = () => {
           {...(isLoggedIn
             ? {
                 // Logged in: replace button area with avatar menu
-                rightNode: <UserAvatarMenu displayName={displayName} />,
+                rightNode: (
+                  <UserAvatarMenu displayName={displayName} isAdmin={isAdmin} />
+                ),
               }
             : {
                 // Guest: show register + login buttons

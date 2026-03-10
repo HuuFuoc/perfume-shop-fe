@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PerfumeService } from "../../services/perfume/perfume.services";
-import type { getAllPerfumeRes } from "../../types/perfume/Perfume.res.type";
+import type { PerfumeRes } from "../../types/perfume/Perfume.res.type";
 
 // ── Palette (mirrors site theme) ─────────────────────────────────────────────
 const BLUSH = "#F8EDEB";
@@ -97,7 +97,7 @@ function PerfumeCard({
   perfume,
   onClick,
 }: {
-  perfume: getAllPerfumeRes;
+  perfume: PerfumeRes;
   onClick: () => void;
 }) {
   return (
@@ -285,7 +285,7 @@ function PerfumeCard({
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 export default function Perfume() {
-  const [perfumes, setPerfumes] = useState<getAllPerfumeRes[]>([]);
+  const [perfumes, setPerfumes] = useState<PerfumeRes[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 

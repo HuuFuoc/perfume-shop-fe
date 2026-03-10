@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { PerfumeService } from "../../services/perfume/perfume.services";
-import type { GetPerfumeByIdRes } from "../../types/perfume/Perfume.res.type";
+import type { PerfumeRes } from "../../types/perfume/Perfume.res.type";
+import { notificationMessage } from "../../utils/helper";
 
 // ── Local comment shape (fields inferred from typical API response) ───────────
 interface PerfumeReview {
@@ -100,29 +101,79 @@ function ErrorScreen({
 }
 
 // ── MAIN PAGE COMPONENT ───────────────────────────────────────────────────────
+type PerfumeWithComments = PerfumeRes & { comments: Comment[] | null };
+
+function fetchPerfume(
+  id: string,
+  onSuccess: (data: PerfumeWithComments) => void,
+  onError: (message: string) => void,
+) {
+  PerfumeService.getPerfumeById({ id })
+    .then((res) => onSuccess(res.data.data as PerfumeWithComments))
+    .catch((err) => {
+      console.error("Error fetching perfume:", err);
+      onError("Unable to load perfume details. Please try again.");
+    });
+}
+
 export default function PerfumeDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const [perfume, setPerfume] = useState<GetPerfumeByIdRes | null>(null);
+  const [perfume, setPerfume] = useState<PerfumeWithComments | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Comment form
+  const [commentContent, setCommentContent] = useState("");
+  const [commentRating, setCommentRating] = useState(5);
+  const [commentSubmitting, setCommentSubmitting] = useState(false);
+  const [commentError, setCommentError] = useState<string | null>(null);
+
   useEffect(() => {
     if (!id) return;
-    setLoading(true);
-    setError(null);
-    PerfumeService.getPerfumeById({ id })
-      .then((res) => {
-        setPerfume(res.data.data);
+    fetchPerfume(
+      id,
+      (data) => {
+        setPerfume(data);
         setLoading(false);
+      },
+      (msg) => {
+        setError(msg);
+        setLoading(false);
+      },
+    );
+  }, [id]);
+
+  const refetchPerfume = () => {
+    if (!id || !perfume) return;
+    fetchPerfume(id, setPerfume, () => {});
+  };
+
+  const handleSubmitComment = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!id || !perfume) return;
+    const content = commentContent.trim();
+    if (!content) {
+      setCommentError("Vui lòng nhập nội dung đánh giá.");
+      return;
+    }
+    setCommentError(null);
+    setCommentSubmitting(true);
+    PerfumeService.createComment({ id, content, rating: commentRating })
+      .then(() => {
+        setCommentContent("");
+        setCommentRating(5);
+        notificationMessage("Đánh giá đã được gửi.", "success");
+        refetchPerfume();
       })
       .catch((err) => {
-        console.error("Error fetching perfume:", err);
-        setError("Unable to load perfume details. Please try again.");
-        setLoading(false);
-      });
-  }, [id]);
+        setCommentError(
+          err.response?.data?.message ?? "Gửi đánh giá thất bại. Vui lòng thử lại.",
+        );
+      })
+      .finally(() => setCommentSubmitting(false));
+  };
 
   if (loading) return <LoadingScreen />;
   if (error || !perfume)
@@ -340,6 +391,64 @@ export default function PerfumeDetailPage() {
         <SectionHeading>
           Reviews{reviewCount > 0 ? ` · ${reviewCount}` : ""}
         </SectionHeading>
+
+        {/* ── Write comment form ── */}
+        <div className="mb-10 rounded-3xl border border-border-soft bg-white/65 p-6 shadow-soft backdrop-blur-sm md:p-8">
+          <p className="mb-4 text-[10px] tracking-[0.38em] text-rosewood uppercase font-semibold">
+            Viết đánh giá
+          </p>
+          <form onSubmit={handleSubmitComment} className="flex flex-col gap-4">
+            <div>
+              <label className="mb-2 block text-xs font-medium text-brown-dark">
+                Đánh giá của bạn (1–5 sao)
+              </label>
+              <div className="flex gap-1">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => setCommentRating(star)}
+                    className="focus:outline-none"
+                    aria-label={`${star} sao`}
+                  >
+                    <svg
+                      viewBox="0 0 20 20"
+                      fill={star <= commentRating ? "#C07850" : "none"}
+                      stroke="#C07850"
+                      strokeWidth="1.3"
+                      className="h-8 w-8 transition-opacity hover:opacity-80"
+                    >
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <label htmlFor="comment-content" className="mb-2 block text-xs font-medium text-brown-dark">
+                Nội dung
+              </label>
+              <textarea
+                id="comment-content"
+                value={commentContent}
+                onChange={(e) => setCommentContent(e.target.value)}
+                placeholder="Chia sẻ trải nghiệm của bạn về mùi hương này..."
+                rows={4}
+                className="w-full resize-none rounded-xl border border-border-soft bg-white/80 px-4 py-3 text-sm text-brown-dark placeholder:text-brown-muted outline-none transition-colors focus:border-rosewood focus:ring-1 focus:ring-rosewood/30"
+              />
+            </div>
+            {commentError && (
+              <p className="text-xs text-red-500">{commentError}</p>
+            )}
+            <button
+              type="submit"
+              disabled={commentSubmitting}
+              className="self-start rounded-xl bg-rosewood px-6 py-3 text-xs font-semibold uppercase tracking-wider text-white transition-colors hover:bg-rosewood-deep disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {commentSubmitting ? "Đang gửi..." : "Gửi đánh giá"}
+            </button>
+          </form>
+        </div>
 
         {reviewCount === 0 ? (
           /* ── Empty state ── */
