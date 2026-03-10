@@ -21,17 +21,17 @@ const HOVER_BG = "rgba(192,120,80,0.07)";
 
 const navItems = [
   {
-    label: "Dashboard",
+    label: "Bảng điều khiển",
     icon: LayoutDashboard,
     to: `${ROUTER_URL.ADMIN.BASE}${ROUTER_URL.ADMIN.DASHBOARD}`,
   },
   {
-    label: "Brands",
+    label: "Thương hiệu",
     icon: Tag,
     to: `${ROUTER_URL.ADMIN.BASE}${ROUTER_URL.ADMIN.BRANDS}`,
   },
   {
-    label: "Perfumes",
+    label: "Nước hoa",
     icon: Sparkles,
     to: `${ROUTER_URL.ADMIN.BASE}${ROUTER_URL.ADMIN.PERFUMES}`,
   },
@@ -80,7 +80,7 @@ export default function AdminLayout() {
                   className="text-[9px] tracking-[0.28em] uppercase font-light whitespace-nowrap"
                   style={{ color: ROSEWOOD }}
                 >
-                  Admin Panel
+                  Khu vực quản trị
                 </div>
               </div>
             )}
@@ -93,7 +93,7 @@ export default function AdminLayout() {
             className="px-4 pt-5 pb-1.5 text-[10px] font-semibold tracking-[0.2em] uppercase"
             style={{ color: TEXT_MUTED }}
           >
-            Menu
+            Danh mục
           </div>
         )}
 
@@ -205,7 +205,7 @@ export default function AdminLayout() {
             className="text-xs font-semibold tracking-[0.18em] uppercase"
             style={{ color: "#B09490" }}
           >
-            Admin Dashboard
+            Khu vực quản trị
           </span>
         </header>
 

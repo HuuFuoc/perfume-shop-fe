@@ -65,13 +65,13 @@ const BrandPanel = () => (
         chai là một tác phẩm nghệ thuật.
       </p>
 
-      {/* Bottom quotes */}
+      {/* Bottom quote — tiếng Việt */}
       <div className="mt-16 space-y-1">
         <div className="text-xs italic font-light" style={{ color: "#7A5C52" }}>
-          "A fragrance is an invisible accessory
+          "Mùi hương là phụ kiện vô hình
         </div>
         <div className="text-xs italic font-light" style={{ color: "#7A5C52" }}>
-          that speaks louder than words."
+          nói lên nhiều điều hơn cả lời."
         </div>
       </div>
     </div>

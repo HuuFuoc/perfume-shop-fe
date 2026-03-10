@@ -23,6 +23,27 @@ export interface GetMeResponse {
   data: UserProfile;
 }
 
+/** Payload for PUT /user/update-me (all optional) */
+export interface UpdateMeReq {
+  name?: string;
+  date_of_birth?: string;
+  bio?: string;
+  location?: string;
+  website?: string;
+}
+
+export interface UpdateMeResponse {
+  message: string;
+  data: UserProfile;
+}
+
+/** Payload for PUT /user/change-password */
+export interface ChangePasswordReq {
+  old_password: string;
+  new_password: string;
+  confirm_new_password: string;
+}
+
 // ── Auth request / response types ────────────────────────────────────────────
 export interface LoginReq {
   email: string;
@@ -91,6 +112,24 @@ export const AuthService = {
     return BaseService.post<GetMeResponse>({
       url: API_PATH.USER.GET_ME,
       payload: {},
+      isLoading: false,
+    });
+  },
+
+  /** PUT /user/update-me — update current user profile */
+  updateMe(payload: UpdateMeReq) {
+    return BaseService.put<UpdateMeResponse>({
+      url: API_PATH.USER.UPDATE_ME,
+      payload,
+      isLoading: false,
+    });
+  },
+
+  /** PUT /user/change-password — change password */
+  changePassword(payload: ChangePasswordReq) {
+    return BaseService.put<{ message: string }>({
+      url: API_PATH.USER.CHANGE_PASSWORD,
+      payload,
       isLoading: false,
     });
   },

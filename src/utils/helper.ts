@@ -112,31 +112,30 @@ export const notification = (message: string) => {
   });
 };
 
+/** Màu toast theo design system (rosewood, brown, v.v.) */
+const TOAST_COLORS = {
+  success: "#A0613D", // rosewood-deep, dễ đọc trên nền sáng
+  error: "#B91C1C",
+  info: "#7A5C52", // brown-mid
+  warning: "#B45309",
+};
+
 export const notificationMessage = (
   message: string,
   type: "success" | "error" | "info" | "warning" = "success",
 ) => {
-  // console.log(`Notification: ${message}, Type: ${type}`);
   const options = {
-    position: "top-right",
+    position: "top-right" as const,
     autoClose: 5000,
     hideProgressBar: false,
     closeOnClick: true,
     pauseOnHover: true,
     draggable: true,
     progress: undefined,
-    theme: "colored",
+    theme: "colored" as const,
     style: {
-      backgroundColor:
-        type === "success"
-          ? "#1a237e"
-          : type === "error"
-            ? "#d32f2f"
-            : type === "info"
-              ? "#1a237e"
-              : type === "warning"
-                ? "#ff9800"
-                : "#ffffff",
+      backgroundColor: TOAST_COLORS[type],
+      color: "#F8EDEB",
     },
   };
 

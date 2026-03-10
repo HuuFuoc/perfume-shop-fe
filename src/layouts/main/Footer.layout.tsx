@@ -63,7 +63,7 @@ const FooterLayout = () => {
                   className="font-serif text-lg font-bold tracking-widest uppercase transition-colors"
                   style={{ color: BROWN_DARK }}
                 >
-                  Parfum
+                  Perfume
                 </div>
                 <div
                   className="text-[9px] tracking-[0.3em] uppercase font-light"
@@ -210,8 +210,7 @@ const FooterLayout = () => {
           style={{ color: BROWN_MUTED }}
         >
           <p>
-            © {new Date().getFullYear()} Parfum Maison de Luxe. All rights
-            reserved.
+            © {new Date().getFullYear()} Perfume Maison de Luxe. Bảo lưu mọi quyền.
           </p>
           <div className="flex gap-4">
             <a

@@ -3,39 +3,39 @@ import Threads from "../../components/Threads";
 const collections = [
   {
     name: "Noir Absolu",
-    note: "Oud · Amber · Sandalwood",
-    desc: "A deep, smoky oriental that commands every room.",
-    badge: "Bestseller",
+    note: "Oud · Hổ phách · Trầm hương",
+    desc: "Hương phương Đông sâu lắng, khói nhẹ, toả sáng trong mọi không gian.",
+    badge: "Bán chạy",
   },
   {
     name: "Lumière Rose",
-    note: "Rose · Peony · Musk",
-    desc: "A delicate floral with an unforgettable radiance.",
-    badge: "New Arrival",
+    note: "Hoa hồng · Mẫu đơn · Xạ hương",
+    desc: "Hương hoa tinh tế với độ toả sáng khó quên.",
+    badge: "Mới về",
   },
   {
     name: "Velours Bleu",
-    note: "Bergamot · Iris · Vetiver",
-    desc: "Cool, crisp, and effortlessly sophisticated.",
-    badge: "Limited",
+    note: "Thanh yên · Iris · Vetiver",
+    desc: "Mát lạnh, thanh lịch và tinh tế.",
+    badge: "Giới hạn",
   },
 ];
 
 const features = [
   {
     icon: "✦",
-    title: "Rare Ingredients",
-    desc: "Sourced from the finest regions across the globe — from Grasse roses to Omani oud.",
+    title: "Nguyên liệu quý hiếm",
+    desc: "Nguồn gốc từ những vùng trồng trọt tinh túy nhất — từ hoa hồng Grasse đến oud Oman.",
   },
   {
     icon: "◈",
-    title: "Master Perfumers",
-    desc: "Each scent is crafted in partnership with world-renowned noses with decades of artistry.",
+    title: "Bậc thầy điều chế",
+    desc: "Mỗi mùi hương được tạo nên cùng những chuyên gia hàng đầu với nhiều thập kỷ kinh nghiệm.",
   },
   {
     icon: "◉",
-    title: "Lasting Impression",
-    desc: "Long-lasting concentration formulas designed to linger beautifully from morning to night.",
+    title: "Lưu hương bền lâu",
+    desc: "Công thức nồng độ cao, lưu hương đẹp từ sáng đến đêm.",
   },
 ];
 
@@ -63,29 +63,27 @@ export default function HomePage() {
             <div className="flex items-center gap-3">
               <div className="h-px w-8 bg-rosewood/40" />
               <span className="text-xs tracking-[0.35em] text-rosewood uppercase font-medium">
-                Luxury Fragrance House
+                Ngôi nhà nước hoa cao cấp
               </span>
             </div>
 
             <h1 className="text-5xl sm:text-6xl lg:text-[5.25rem] font-light leading-[1.08] tracking-tight text-brown-dark">
-              Wear a <span className="italic text-rosewood">Memory.</span>
+              Khoác lên <span className="italic text-rosewood">ký ức.</span>
               <br />
-              Leave a <span className="italic text-rosewood">Legend.</span>
+              Để lại <span className="italic text-rosewood">huyền thoại.</span>
             </h1>
 
             {/* Thin accent rule */}
             <div className="flex items-center gap-4">
               <div className="h-px flex-1 max-w-[3rem] bg-border-soft" />
               <span className="text-[10px] tracking-[0.4em] text-brown-muted uppercase">
-                Est. 2010 · Paris
+                Thành lập 2010 · Paris
               </span>
               <div className="h-px flex-1 max-w-[3rem] bg-border-soft" />
             </div>
 
             <p className="text-brown-mid text-lg max-w-[26rem] leading-relaxed">
-              Discover our curated collection of rare, handcrafted fragrances —
-              each bottle a journey through the world's most extraordinary
-              ingredients.
+              Khám phá bộ sưu tập nước hoa thủ công quý hiếm — mỗi chai là một hành trình qua những nguyên liệu đặc biệt nhất thế giới.
             </p>
 
             <div className="flex flex-wrap gap-4 pt-1">
@@ -93,22 +91,22 @@ export default function HomePage() {
                 href="/perfumes"
                 className="px-8 py-3.5 bg-rosewood text-white text-sm font-semibold tracking-widest uppercase rounded-full shadow-card hover:bg-rosewood-deep transition-all duration-300"
               >
-                Explore Collection
+                Khám phá bộ sưu tập
               </a>
               <a
                 href="/about"
                 className="px-8 py-3.5 border border-border-soft text-brown-mid text-sm font-semibold tracking-widest uppercase rounded-full hover:border-rosewood hover:text-rosewood hover:bg-petal/50 transition-all duration-300"
               >
-                Our Story
+                Câu chuyện thương hiệu
               </a>
             </div>
 
             {/* Stats */}
             <div className="flex gap-10 pt-6 border-t border-border-soft">
               {[
-                ["120+", "Fragrances"],
-                ["18", "Countries"],
-                ["50K+", "Clients"],
+                ["120+", "Mùi hương"],
+                ["18", "Quốc gia"],
+                ["50K+", "Khách hàng"],
               ].map(([val, label]) => (
                 <div key={label}>
                   <p className="text-2xl font-semibold text-rosewood">{val}</p>
@@ -234,7 +232,7 @@ export default function HomePage() {
 
         {/* Scroll cue */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-brown-muted">
-          <span className="text-[10px] tracking-[0.3em] uppercase">Scroll</span>
+          <span className="text-[10px] tracking-[0.3em] uppercase">Cuộn xuống</span>
           <div className="w-px h-10 bg-gradient-to-b from-brown-muted/50 to-transparent" />
         </div>
       </section>
@@ -260,17 +258,17 @@ export default function HomePage() {
           <div className="flex items-end justify-between mb-16">
             <div>
               <p className="text-xs tracking-[0.3em] text-rosewood uppercase font-medium mb-3">
-                Curated for You
+                Dành riêng cho bạn
               </p>
               <h2 className="text-4xl lg:text-5xl font-light text-brown-dark">
-                Signature Collection
+                Bộ sưu tập đặc trưng
               </h2>
             </div>
             <a
               href="/perfumes"
               className="hidden md:flex items-center gap-2 text-sm text-brown-muted hover:text-rosewood transition-colors duration-300 font-medium"
             >
-              View all <span className="text-base">→</span>
+              Xem tất cả <span className="text-base">→</span>
             </a>
           </div>
 
@@ -301,7 +299,7 @@ export default function HomePage() {
                 </p>
 
                 <div className="mt-8 flex items-center gap-2 text-xs text-brown-muted group-hover:text-rosewood transition-colors duration-300 uppercase tracking-widest font-medium">
-                  Discover <span>→</span>
+                  Khám phá <span>→</span>
                 </div>
               </article>
             ))}
@@ -325,25 +323,23 @@ export default function HomePage() {
 
         <div className="relative z-10 max-w-3xl mx-auto text-center">
           <p className="text-xs tracking-[0.3em] text-rosewood uppercase font-medium mb-6">
-            Est. 2010
+            Thành lập 2010
           </p>
           <h2 className="text-4xl lg:text-5xl font-light leading-tight mb-8 text-brown-dark">
-            Perfumery is not a product.
+            Nước hoa không chỉ là sản phẩm.
             <br />
             <span className="italic text-rosewood">
-              It is poetry in a bottle.
+              Đó là thơ ca trong từng chai.
             </span>
           </h2>
           <p className="text-brown-mid text-lg leading-relaxed max-w-xl mx-auto">
-            Founded in the heart of Paris, our maison has spent over a decade
-            translating emotion, memory, and desire into scent. Every fragrance
-            begins with a story — and ends with yours.
+            Ra đời tại trung tâm Paris, ngôi nhà của chúng tôi đã dành hơn một thập kỷ chuyển tải cảm xúc, ký ức và khát khao thành hương thơm. Mỗi mùi hương bắt đầu từ một câu chuyện — và kết thúc bằng câu chuyện của bạn.
           </p>
           <a
             href="/about"
             className="inline-block mt-10 text-sm tracking-[0.25em] uppercase text-rosewood border-b-2 border-rosewood/30 pb-0.5 hover:border-rosewood transition-colors duration-300 font-medium"
           >
-            Read our story
+            Đọc câu chuyện của chúng tôi
           </a>
         </div>
       </section>
@@ -352,7 +348,7 @@ export default function HomePage() {
       <section className="bg-blush py-28 px-6 lg:px-16 border-t border-border-soft">
         <div className="max-w-7xl mx-auto">
           <p className="text-xs tracking-[0.3em] text-rosewood uppercase text-center font-medium mb-16">
-            Why Choose Us
+            Vì sao chọn chúng tôi
           </p>
           <div className="grid md:grid-cols-3 gap-12">
             {features.map((f) => (
@@ -381,20 +377,19 @@ export default function HomePage() {
 
         <div className="relative z-10">
           <p className="text-xs tracking-[0.4em] uppercase mb-4 text-brown-mid font-medium">
-            Limited Edition
+            Phiên bản giới hạn
           </p>
           <h2 className="text-4xl lg:text-5xl font-light mb-6 text-brown-dark">
-            Your signature scent awaits.
+            Mùi hương đặc trưng đang chờ bạn.
           </h2>
           <p className="text-brown-mid mb-10 max-w-md mx-auto text-sm leading-relaxed">
-            Free shipping on orders over $150. Complimentary samples with every
-            purchase.
+            Miễn phí giao hàng đơn từ 500.000₫. Tặng kèm mẫu thử cho mỗi đơn hàng.
           </p>
           <a
             href="/perfumes"
             className="inline-block px-10 py-4 bg-brown-dark text-peach text-sm font-semibold tracking-widest uppercase rounded-full shadow-card hover:bg-[#5C3D2E] hover:shadow-card-hover transition-all duration-300"
           >
-            Shop Now
+            Mua ngay
           </a>
         </div>
       </section>

@@ -6,6 +6,8 @@ export const API_PATH = {
   },
   USER: {
     GET_ME: "/user/get-me",
+    UPDATE_ME: "/user/update-me",
+    CHANGE_PASSWORD: "/user/change-password",
   },
   PERFUME: {
     BASE: "/perfumes",

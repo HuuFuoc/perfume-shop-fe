@@ -1,5 +1,16 @@
 import { useEffect, useState } from "react";
 import { BaseService } from "../../app/api/base.service";
+import {
+  AdminPageHeader,
+  AdminTableWrapper,
+  AdminRoleBadge,
+  AdminVerifyBadge,
+  ADMIN_BORDER_SOFT,
+  ADMIN_BROWN_DARK,
+  ADMIN_MUTED,
+  ADMIN_ROW_HOVER,
+  ADMIN_THEAD_BG,
+} from "../../components/admin/AdminShared";
 
 type Collector = {
   _id: string;
@@ -35,7 +46,7 @@ export default function AdminDashboard() {
       .catch((err) => {
         if (!isMounted) return;
         console.error("Failed to fetch collectors", err);
-        setError("Không tải được danh sách collectors.");
+        setError("Không tải được danh sách thành viên.");
         setLoading(false);
       });
 
@@ -45,51 +56,106 @@ export default function AdminDashboard() {
   }, []);
 
   if (loading) {
-    return <div className="p-6">Đang tải danh sách collectors...</div>;
+    return (
+      <div className="flex flex-col items-center justify-center py-16">
+        <div
+          className="h-10 w-10 rounded-full border-2 border-t-[#C07850] animate-spin"
+          style={{ borderColor: ADMIN_BORDER_SOFT }}
+        />
+        <p className="mt-3 text-sm" style={{ color: ADMIN_MUTED }}>
+          Đang tải danh sách thành viên...
+        </p>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="p-6 text-red-500">{error}</div>;
+    return (
+      <div
+        className="rounded-2xl border px-5 py-4 text-sm"
+        style={{
+          borderColor: ADMIN_BORDER_SOFT,
+          backgroundColor: "rgba(248,237,235,0.8)",
+          color: "#C05050",
+        }}
+      >
+        {error}
+      </div>
+    );
   }
 
   return (
-    <div className="p-6">
-      <h1 className="mb-4 text-xl font-semibold">Danh sách Collectors</h1>
+    <div className="p-4 sm:p-6">
+      <AdminPageHeader
+        title="Danh sách thành viên"
+        subtitle="Quản lý tài khoản thành viên trong hệ thống"
+        count={collectors.length}
+      />
+
       {collectors.length === 0 ? (
-        <div>Chưa có collector nào.</div>
+        <AdminTableWrapper>
+          <div
+            className="py-16 text-center text-sm"
+            style={{ color: ADMIN_MUTED }}
+          >
+            Chưa có thành viên nào.
+          </div>
+        </AdminTableWrapper>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-gray-200">
-          <table className="min-w-full text-sm">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-4 py-2 text-left font-medium text-gray-600">
-                  Tên
-                </th>
-                <th className="px-4 py-2 text-left font-medium text-gray-600">
-                  Email
-                </th>
-                <th className="px-4 py-2 text-left font-medium text-gray-600">
-                  Role
-                </th>
-                <th className="px-4 py-2 text-left font-medium text-gray-600">
-                  Trạng thái
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {collectors.map((c) => (
-                <tr key={c._id} className="border-t border-gray-100">
-                  <td className="px-4 py-2">{c.name}</td>
-                  <td className="px-4 py-2">{c.email}</td>
-                  <td className="px-4 py-2">{c.role}</td>
-                  <td className="px-4 py-2">
-                    {c.verify === 1 ? "Đã xác thực" : "Chưa xác thực"}
-                  </td>
+        <AdminTableWrapper>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[500px] text-sm">
+              <thead>
+                <tr
+                  className="text-left text-xs font-semibold uppercase tracking-wider"
+                  style={{
+                    backgroundColor: ADMIN_THEAD_BG,
+                    color: ADMIN_MUTED,
+                    borderBottom: `1px solid ${ADMIN_BORDER_SOFT}`,
+                  }}
+                >
+                  <th className="px-5 py-3.5 font-medium">Tên</th>
+                  <th className="px-5 py-3.5 font-medium">Email</th>
+                  <th className="px-5 py-3.5 font-medium">Vai trò</th>
+                  <th className="px-5 py-3.5 font-medium">Trạng thái</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {collectors.map((c) => (
+                  <tr
+                    key={c._id}
+                    className="transition-colors duration-150"
+                    style={{
+                      borderBottom: `1px solid ${ADMIN_BORDER_SOFT}`,
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = ADMIN_ROW_HOVER;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "transparent";
+                    }}
+                  >
+                    <td
+                      className="px-5 py-3.5 font-medium"
+                      style={{ color: ADMIN_BROWN_DARK }}
+                    >
+                      {c.name || "—"}
+                    </td>
+                    <td className="px-5 py-3.5" style={{ color: ADMIN_BROWN_DARK }}>
+                      {c.email || "—"}
+                    </td>
+                    <td className="px-5 py-3.5">
+                      <AdminRoleBadge role={c.role} />
+                    </td>
+                    <td className="px-5 py-3.5">
+                      <AdminVerifyBadge verified={c.verify === 1} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </AdminTableWrapper>
       )}
     </div>
   );

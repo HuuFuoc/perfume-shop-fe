@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ImageIcon, Plus, Pencil, Trash2, Upload, X } from "lucide-react";
+import { ImageIcon, Plus, Upload, X } from "lucide-react";
 import { PerfumeService } from "../../services/perfume/perfume.services";
 import { BrandService } from "../../services/brand/brand.services";
 import { useS3Upload } from "../../hooks/useS3Upload";
@@ -14,12 +14,18 @@ import { BRANDS_QUERY_KEY } from "../../hooks/useBrandMutations";
 import { notificationMessage } from "../../utils/helper";
 import type { PerfumeRes } from "../../types/perfume/Perfume.res.type";
 import type { CreatePerfumeReq } from "../../types/perfume/Perfume.req.type";
-
-// ── Design tokens ─────────────────────────────────────────────────
-const ROSEWOOD = "#C07850";
-const BROWN_DARK = "#3D2B1F";
-const BORDER_SOFT = "#E8D5CF";
-const PANEL_BG = "#FDF0ED";
+import {
+  AdminPageHeader,
+  AdminTableWrapper,
+  AdminActionButtons,
+  ADMIN_ROSEWOOD,
+  ADMIN_BROWN_DARK,
+  ADMIN_BORDER_SOFT,
+  ADMIN_PANEL_BG,
+  ADMIN_MUTED,
+  ADMIN_ROW_HOVER,
+  ADMIN_THEAD_BG,
+} from "../../components/admin/AdminShared";
 
 const EMPTY_FORM: CreatePerfumeReq = {
   perfumeName: "",
@@ -77,13 +83,13 @@ function ImageUploadField({
     <div>
       <label
         className="mb-1.5 block text-xs font-semibold uppercase tracking-wider"
-        style={{ color: "#B09490" }}
+        style={{ color: ADMIN_MUTED }}
       >
         Ảnh sản phẩm *
       </label>
       <div
         className="relative mb-2 flex h-44 w-full items-center justify-center overflow-hidden rounded-xl border-2 border-dashed"
-        style={{ borderColor: BORDER_SOFT }}
+        style={{ borderColor: ADMIN_BORDER_SOFT }}
       >
         {previewUrl ? (
           <img
@@ -94,7 +100,7 @@ function ImageUploadField({
         ) : (
           <div
             className="flex flex-col items-center gap-2 text-sm"
-            style={{ color: "#B09490" }}
+            style={{ color: ADMIN_MUTED }}
           >
             <ImageIcon size={32} />
             <span>Chọn ảnh để xem trước</span>
@@ -118,7 +124,7 @@ function ImageUploadField({
       <div className="flex gap-2">
         <label
           className="flex cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors hover:bg-black/5"
-          style={{ borderColor: BORDER_SOFT, color: BROWN_DARK }}
+          style={{ borderColor: ADMIN_BORDER_SOFT, color: ADMIN_BROWN_DARK }}
         >
           <ImageIcon size={13} />
           Chọn ảnh
@@ -134,7 +140,7 @@ function ImageUploadField({
           onClick={onUpload}
           disabled={!selectedFile || isUploading || !!uploadedImage}
           className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40"
-          style={{ backgroundColor: ROSEWOOD }}
+          style={{ backgroundColor: ADMIN_ROSEWOOD }}
         >
           <Upload size={13} />
           {isUploading ? "Đang upload..." : "Upload ảnh"}
@@ -145,7 +151,7 @@ function ImageUploadField({
             onClick={onDelete}
             disabled={isUploading}
             className="flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors hover:bg-red-50 disabled:opacity-40"
-            style={{ borderColor: BORDER_SOFT, color: "#ef4444" }}
+            style={{ borderColor: ADMIN_BORDER_SOFT, color: "#ef4444" }}
           >
             <X size={13} />
             Xóa ảnh
@@ -176,7 +182,7 @@ function BrandSelect({
     <div>
       <label
         className="mb-1 block text-xs font-semibold uppercase tracking-wider"
-        style={{ color: "#B09490" }}
+        style={{ color: ADMIN_MUTED }}
       >
         Thương hiệu
       </label>
@@ -185,9 +191,9 @@ function BrandSelect({
         onChange={(e) => onChange(e.target.value)}
         className="w-full rounded-lg border px-3 py-2 text-sm outline-none transition-colors focus:border-[#C07850]"
         style={{
-          borderColor: BORDER_SOFT,
+          borderColor: ADMIN_BORDER_SOFT,
           backgroundColor: "#fff",
-          color: BROWN_DARK,
+          color: ADMIN_BROWN_DARK,
         }}
       >
         <option value="">— Không chọn —</option>
@@ -257,15 +263,15 @@ function PerfumeCreateForm({ onClose }: { onClose: () => void }) {
       <div className="flex-1 bg-black/30" onClick={onClose} />
       <div
         className="flex h-full w-full max-w-md flex-col overflow-y-auto shadow-2xl"
-        style={{ backgroundColor: PANEL_BG }}
+        style={{ backgroundColor: ADMIN_PANEL_BG }}
       >
         <div
           className="flex shrink-0 items-center justify-between border-b px-6 py-4"
-          style={{ borderColor: BORDER_SOFT }}
+          style={{ borderColor: ADMIN_BORDER_SOFT }}
         >
           <h2
             className="font-serif text-base font-bold"
-            style={{ color: BROWN_DARK }}
+            style={{ color: ADMIN_BROWN_DARK }}
           >
             Thêm nước hoa mới
           </h2>
@@ -273,7 +279,7 @@ function PerfumeCreateForm({ onClose }: { onClose: () => void }) {
             onClick={onClose}
             className="rounded-lg p-1 transition-colors hover:bg-black/10"
           >
-            <X size={18} style={{ color: BROWN_DARK }} />
+            <X size={18} style={{ color: ADMIN_BROWN_DARK }} />
           </button>
         </div>
 
@@ -297,7 +303,7 @@ function PerfumeCreateForm({ onClose }: { onClose: () => void }) {
               <label
                 htmlFor={`create-${name}`}
                 className="mb-1 block text-xs font-semibold uppercase tracking-wider"
-                style={{ color: "#B09490" }}
+                style={{ color: ADMIN_MUTED }}
               >
                 {label} {required && "*"}
               </label>
@@ -311,9 +317,9 @@ function PerfumeCreateForm({ onClose }: { onClose: () => void }) {
                 min={type === "number" ? 0 : undefined}
                 className="w-full rounded-lg border px-3 py-2 text-sm outline-none transition-colors focus:border-[#C07850]"
                 style={{
-                  borderColor: BORDER_SOFT,
+                  borderColor: ADMIN_BORDER_SOFT,
                   backgroundColor: "#fff",
-                  color: BROWN_DARK,
+                  color: ADMIN_BROWN_DARK,
                 }}
               />
             </div>
@@ -323,7 +329,7 @@ function PerfumeCreateForm({ onClose }: { onClose: () => void }) {
             <label
               htmlFor="create-description"
               className="mb-1 block text-xs font-semibold uppercase tracking-wider"
-              style={{ color: "#B09490" }}
+              style={{ color: ADMIN_MUTED }}
             >
               Mô tả
             </label>
@@ -335,9 +341,9 @@ function PerfumeCreateForm({ onClose }: { onClose: () => void }) {
               onChange={handleChange}
               className="w-full resize-none rounded-lg border px-3 py-2 text-sm outline-none transition-colors focus:border-[#C07850]"
               style={{
-                borderColor: BORDER_SOFT,
+                borderColor: ADMIN_BORDER_SOFT,
                 backgroundColor: "#fff",
-                color: BROWN_DARK,
+                color: ADMIN_BROWN_DARK,
               }}
             />
           </div>
@@ -346,7 +352,7 @@ function PerfumeCreateForm({ onClose }: { onClose: () => void }) {
             <label
               htmlFor="create-ingredients"
               className="mb-1 block text-xs font-semibold uppercase tracking-wider"
-              style={{ color: "#B09490" }}
+              style={{ color: ADMIN_MUTED }}
             >
               Thành phần
             </label>
@@ -358,9 +364,9 @@ function PerfumeCreateForm({ onClose }: { onClose: () => void }) {
               onChange={handleChange}
               className="w-full resize-none rounded-lg border px-3 py-2 text-sm outline-none transition-colors focus:border-[#C07850]"
               style={{
-                borderColor: BORDER_SOFT,
+                borderColor: ADMIN_BORDER_SOFT,
                 backgroundColor: "#fff",
-                color: BROWN_DARK,
+                color: ADMIN_BROWN_DARK,
               }}
             />
           </div>
@@ -372,13 +378,13 @@ function PerfumeCreateForm({ onClose }: { onClose: () => void }) {
 
           <div
             className="sticky bottom-0 flex shrink-0 gap-3 border-t pt-4"
-            style={{ borderColor: BORDER_SOFT, backgroundColor: PANEL_BG }}
+            style={{ borderColor: ADMIN_BORDER_SOFT, backgroundColor: ADMIN_PANEL_BG }}
           >
             <button
               type="button"
               onClick={onClose}
               className="flex-1 rounded-lg border py-2 text-sm font-medium transition-colors hover:bg-black/5"
-              style={{ borderColor: BORDER_SOFT, color: BROWN_DARK }}
+              style={{ borderColor: ADMIN_BORDER_SOFT, color: ADMIN_BROWN_DARK }}
             >
               Hủy
             </button>
@@ -386,7 +392,7 @@ function PerfumeCreateForm({ onClose }: { onClose: () => void }) {
               type="submit"
               disabled={isPending || isUploading || !form.uri}
               className="flex-1 rounded-lg py-2 text-sm font-medium text-white transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40"
-              style={{ backgroundColor: ROSEWOOD }}
+              style={{ backgroundColor: ADMIN_ROSEWOOD }}
             >
               {isPending ? "Đang lưu..." : "Lưu nước hoa"}
             </button>
@@ -469,15 +475,15 @@ function PerfumeEditForm({
       <div className="flex-1 bg-black/30" onClick={onClose} />
       <div
         className="flex h-full w-full max-w-md flex-col overflow-y-auto shadow-2xl"
-        style={{ backgroundColor: PANEL_BG }}
+        style={{ backgroundColor: ADMIN_PANEL_BG }}
       >
         <div
           className="flex shrink-0 items-center justify-between border-b px-6 py-4"
-          style={{ borderColor: BORDER_SOFT }}
+          style={{ borderColor: ADMIN_BORDER_SOFT }}
         >
           <h2
             className="font-serif text-base font-bold"
-            style={{ color: BROWN_DARK }}
+            style={{ color: ADMIN_BROWN_DARK }}
           >
             Chỉnh sửa nước hoa
           </h2>
@@ -485,7 +491,7 @@ function PerfumeEditForm({
             onClick={onClose}
             className="rounded-lg p-1 transition-colors hover:bg-black/10"
           >
-            <X size={18} style={{ color: BROWN_DARK }} />
+            <X size={18} style={{ color: ADMIN_BROWN_DARK }} />
           </button>
         </div>
 
@@ -509,7 +515,7 @@ function PerfumeEditForm({
               <label
                 htmlFor={`edit-${name}`}
                 className="mb-1 block text-xs font-semibold uppercase tracking-wider"
-                style={{ color: "#B09490" }}
+                style={{ color: ADMIN_MUTED }}
               >
                 {label} {required && "*"}
               </label>
@@ -523,9 +529,9 @@ function PerfumeEditForm({
                 min={type === "number" ? 0 : undefined}
                 className="w-full rounded-lg border px-3 py-2 text-sm outline-none transition-colors focus:border-[#C07850]"
                 style={{
-                  borderColor: BORDER_SOFT,
+                  borderColor: ADMIN_BORDER_SOFT,
                   backgroundColor: "#fff",
-                  color: BROWN_DARK,
+                  color: ADMIN_BROWN_DARK,
                 }}
               />
             </div>
@@ -535,7 +541,7 @@ function PerfumeEditForm({
             <label
               htmlFor="edit-description"
               className="mb-1 block text-xs font-semibold uppercase tracking-wider"
-              style={{ color: "#B09490" }}
+              style={{ color: ADMIN_MUTED }}
             >
               Mô tả
             </label>
@@ -547,9 +553,9 @@ function PerfumeEditForm({
               onChange={handleChange}
               className="w-full resize-none rounded-lg border px-3 py-2 text-sm outline-none transition-colors focus:border-[#C07850]"
               style={{
-                borderColor: BORDER_SOFT,
+                borderColor: ADMIN_BORDER_SOFT,
                 backgroundColor: "#fff",
-                color: BROWN_DARK,
+                color: ADMIN_BROWN_DARK,
               }}
             />
           </div>
@@ -558,7 +564,7 @@ function PerfumeEditForm({
             <label
               htmlFor="edit-ingredients"
               className="mb-1 block text-xs font-semibold uppercase tracking-wider"
-              style={{ color: "#B09490" }}
+              style={{ color: ADMIN_MUTED }}
             >
               Thành phần
             </label>
@@ -570,9 +576,9 @@ function PerfumeEditForm({
               onChange={handleChange}
               className="w-full resize-none rounded-lg border px-3 py-2 text-sm outline-none transition-colors focus:border-[#C07850]"
               style={{
-                borderColor: BORDER_SOFT,
+                borderColor: ADMIN_BORDER_SOFT,
                 backgroundColor: "#fff",
-                color: BROWN_DARK,
+                color: ADMIN_BROWN_DARK,
               }}
             />
           </div>
@@ -584,13 +590,13 @@ function PerfumeEditForm({
 
           <div
             className="sticky bottom-0 flex shrink-0 gap-3 border-t pt-4"
-            style={{ borderColor: BORDER_SOFT, backgroundColor: PANEL_BG }}
+            style={{ borderColor: ADMIN_BORDER_SOFT, backgroundColor: ADMIN_PANEL_BG }}
           >
             <button
               type="button"
               onClick={onClose}
               className="flex-1 rounded-lg border py-2 text-sm font-medium transition-colors hover:bg-black/5"
-              style={{ borderColor: BORDER_SOFT, color: BROWN_DARK }}
+              style={{ borderColor: ADMIN_BORDER_SOFT, color: ADMIN_BROWN_DARK }}
             >
               Hủy
             </button>
@@ -598,7 +604,7 @@ function PerfumeEditForm({
               type="submit"
               disabled={isPending || isUploading}
               className="flex-1 rounded-lg py-2 text-sm font-medium text-white transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40"
-              style={{ backgroundColor: ROSEWOOD }}
+              style={{ backgroundColor: ADMIN_ROSEWOOD }}
             >
               {isPending ? "Đang lưu..." : "Cập nhật"}
             </button>
@@ -609,43 +615,40 @@ function PerfumeEditForm({
   );
 }
 
-// ─────────────────────────────────────────────────────────────────
-// Sub-component: PerfumeDeleteButton — DELETE /perfumes/{id}
-// ─────────────────────────────────────────────────────────────────
-function PerfumeDeleteButton({ id }: { id: string }) {
-  const { mutate, isPending } = useDeletePerfume();
-
-  const handleClick = () => {
-    if (!window.confirm("Bạn có chắc muốn xóa nước hoa này không?")) return;
-    mutate(id);
-  };
-
-  return (
-    <button
-      onClick={handleClick}
-      disabled={isPending}
-      className="rounded-lg p-1.5 transition-colors hover:bg-red-50 disabled:opacity-40"
-      title="Xóa"
-    >
-      <Trash2 size={15} style={{ color: "#C04040" }} />
-    </button>
-  );
+// ── Helper: format giá/dung tích thân thiện, tránh raw "0đ", "0 ml" ───────────
+function formatPrice(price: number): string {
+  if (price == null || Number.isNaN(price)) return "—";
+  return `${Number(price).toLocaleString("vi-VN")} ₫`;
+}
+function formatVolume(volume: number): string {
+  if (volume == null || Number.isNaN(volume) || volume <= 0) return "—";
+  return `${volume} ml`;
 }
 
-// ─────────────────────────────────────────────────────────────────
-// Sub-component: PerfumeList — GET /perfumes
-// ─────────────────────────────────────────────────────────────────
-function PerfumeList({ onEdit }: { onEdit: (p: PerfumeRes) => void }) {
+// ── PerfumeList: bảng danh sách nước hoa (hỗ trợ search + filter brand) ─────
+function PerfumeList({
+  onEdit,
+  search = "",
+  brandId = "",
+}: {
+  onEdit: (p: PerfumeRes) => void;
+  search?: string;
+  brandId?: string;
+}) {
   const { data, isLoading } = useQuery({
-    queryKey: PERFUMES_QUERY_KEY,
-    queryFn: () => PerfumeService.getAllPerfumes(),
+    queryKey: [PERFUMES_QUERY_KEY, search.trim(), brandId],
+    queryFn: () =>
+      PerfumeService.getAllPerfumes({
+        ...(search.trim() && { search: search.trim() }),
+        ...(brandId && { brand: brandId }),
+      }),
   });
-
+  const { mutate: deletePerfume, isPending: isDeleting } = useDeletePerfume();
   const perfumes = data?.data?.data ?? [];
 
   if (isLoading) {
     return (
-      <div className="py-16 text-center text-sm" style={{ color: "#B09490" }}>
+      <div className="py-16 text-center text-sm" style={{ color: ADMIN_MUTED }}>
         Đang tải...
       </div>
     );
@@ -653,125 +656,200 @@ function PerfumeList({ onEdit }: { onEdit: (p: PerfumeRes) => void }) {
 
   if (perfumes.length === 0) {
     return (
-      <div className="py-16 text-center text-sm" style={{ color: "#B09490" }}>
-        Chưa có sản phẩm nào.
+      <div className="py-16 text-center text-sm" style={{ color: ADMIN_MUTED }}>
+        {search.trim() || brandId ? "Không có sản phẩm nào phù hợp bộ lọc." : "Chưa có sản phẩm nào."}
       </div>
     );
   }
 
   return (
-    <table className="w-full text-sm">
-      <thead>
-        <tr
-          className="border-b text-left text-xs font-semibold uppercase tracking-wider"
-          style={{
-            borderColor: BORDER_SOFT,
-            color: "#B09490",
-            backgroundColor: "#F5E6E0",
-          }}
-        >
-          <th className="px-4 py-3">Ảnh</th>
-          <th className="px-4 py-3">Tên</th>
-          <th className="px-4 py-3">Giá</th>
-          <th className="px-4 py-3">Nồng độ</th>
-          <th className="px-4 py-3">Dung tích</th>
-          <th className="px-4 py-3">Đối tượng</th>
-          <th className="px-4 py-3 text-right">Thao tác</th>
-        </tr>
-      </thead>
-      <tbody>
-        {perfumes.map((p, idx) => (
+    <div className="overflow-x-auto">
+      <table className="w-full min-w-[640px] text-sm">
+        <thead>
           <tr
-            key={p._id}
-            className="border-b last:border-0 hover:bg-[#F5E6E0]/40"
+            className="text-left text-xs font-semibold uppercase tracking-wider"
             style={{
-              borderColor: BORDER_SOFT,
-              backgroundColor:
-                idx % 2 === 1 ? "rgba(248,237,235,0.5)" : "transparent",
+              borderBottom: `1px solid ${ADMIN_BORDER_SOFT}`,
+              backgroundColor: ADMIN_THEAD_BG,
+              color: ADMIN_MUTED,
             }}
           >
-            <td className="px-4 py-3">
-              {p.uri ? (
-                <img
-                  src={p.uri}
-                  alt={p.perfumeName}
-                  className="h-10 w-10 rounded-lg border object-cover"
-                  style={{ borderColor: BORDER_SOFT }}
-                />
-              ) : (
-                <div
-                  className="flex h-10 w-10 items-center justify-center rounded-lg border"
-                  style={{ borderColor: BORDER_SOFT, color: "#B09490" }}
-                >
-                  <ImageIcon size={16} />
-                </div>
-              )}
-            </td>
-            <td className="px-4 py-3 font-medium" style={{ color: BROWN_DARK }}>
-              {p.perfumeName}
-            </td>
-            <td className="px-4 py-3">{p.price.toLocaleString("vi-VN")}₫</td>
-            <td className="px-4 py-3">{p.concentration}</td>
-            <td className="px-4 py-3">{p.volume} ml</td>
-            <td className="px-4 py-3">{p.targetAudience}</td>
-            <td className="px-4 py-3">
-              <div className="flex items-center justify-end gap-1">
-                <button
-                  onClick={() => onEdit(p)}
-                  className="rounded-lg p-1.5 transition-colors hover:bg-[#FCD5CE]/40"
-                  title="Chỉnh sửa"
-                >
-                  <Pencil size={15} style={{ color: ROSEWOOD }} />
-                </button>
-                <PerfumeDeleteButton id={p._id} />
-              </div>
-            </td>
+            <th className="px-5 py-3.5 font-medium w-[64px]">Ảnh</th>
+            <th className="px-5 py-3.5 font-medium">Tên</th>
+            <th className="px-5 py-3.5 font-medium">Giá</th>
+            <th className="px-5 py-3.5 font-medium">Dung tích</th>
+            <th className="px-5 py-3.5 font-medium">Đối tượng</th>
+            <th className="px-5 py-3.5 text-right font-medium">Thao tác</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {perfumes.map((p) => (
+            <tr
+              key={p._id}
+              className="transition-colors duration-150"
+              style={{ borderBottom: `1px solid ${ADMIN_BORDER_SOFT}` }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = ADMIN_ROW_HOVER;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "transparent";
+              }}
+            >
+              <td className="px-5 py-3.5">
+                <div
+                  className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl border bg-white"
+                  style={{ borderColor: ADMIN_BORDER_SOFT }}
+                >
+                  {p.uri ? (
+                    <img
+                      src={p.uri}
+                      alt=""
+                      className="h-full w-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.style.display = "none";
+                        const parent = e.currentTarget.parentElement;
+                        if (parent) {
+                          const fallback = parent.querySelector(".perfume-img-fallback");
+                          if (fallback) (fallback as HTMLElement).style.display = "flex";
+                        }
+                      }}
+                    />
+                  ) : null}
+                  <div
+                    className="perfume-img-fallback h-full w-full items-center justify-center text-center"
+                    style={{
+                      display: p.uri ? "none" : "flex",
+                      color: ADMIN_MUTED,
+                      backgroundColor: "rgba(248,237,235,0.6)",
+                    }}
+                  >
+                    <ImageIcon size={20} />
+                  </div>
+                </div>
+              </td>
+              <td className="px-5 py-3.5">
+                <span className="font-semibold" style={{ color: ADMIN_BROWN_DARK }}>
+                  {p.perfumeName || "—"}
+                </span>
+              </td>
+              <td className="px-5 py-3.5" style={{ color: ADMIN_BROWN_DARK }}>
+                {formatPrice(p.price)}
+              </td>
+              <td className="px-5 py-3.5" style={{ color: ADMIN_BROWN_DARK }}>
+                {formatVolume(p.volume)}
+              </td>
+              <td className="px-5 py-3.5" style={{ color: ADMIN_BROWN_DARK }}>
+                {p.targetAudience?.trim() ? p.targetAudience : "—"}
+              </td>
+              <td className="px-5 py-3.5">
+                <AdminActionButtons
+                  onEdit={() => onEdit(p)}
+                  onDelete={() => {
+                    if (!window.confirm("Bạn có chắc muốn xóa nước hoa này không?")) return;
+                    deletePerfume(p._id);
+                  }}
+                  deleteDisabled={isDeleting}
+                />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
 
-// ─────────────────────────────────────────────────────────────────
-// Page: Perfumes
-// ─────────────────────────────────────────────────────────────────
+// ── Thanh tìm kiếm + lọc thương hiệu (admin) ─────────────────────────────────
+function AdminPerfumeFilters({
+  search,
+  onSearchChange,
+  brandId,
+  onBrandChange,
+  brandOptions,
+}: {
+  search: string;
+  onSearchChange: (v: string) => void;
+  brandId: string;
+  onBrandChange: (v: string) => void;
+  brandOptions: { _id: string; brandName: string }[];
+}) {
+  return (
+    <div
+      className="flex flex-col sm:flex-row gap-3 mb-4 p-4 rounded-2xl border"
+      style={{ borderColor: ADMIN_BORDER_SOFT, backgroundColor: "rgba(255,255,255,0.7)" }}
+    >
+      <input
+        type="text"
+        value={search}
+        onChange={(e) => onSearchChange(e.target.value)}
+        placeholder="Tìm theo tên nước hoa..."
+        className="flex-1 min-w-0 rounded-xl border px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-rosewood/20"
+        style={{ borderColor: ADMIN_BORDER_SOFT, color: ADMIN_BROWN_DARK }}
+      />
+      <select
+        value={brandId}
+        onChange={(e) => onBrandChange(e.target.value)}
+        className="rounded-xl border px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-rosewood/20 min-w-[180px]"
+        style={{ borderColor: ADMIN_BORDER_SOFT, color: ADMIN_BROWN_DARK, backgroundColor: "#fff" }}
+      >
+        <option value="">Tất cả thương hiệu</option>
+        {brandOptions.map((b) => (
+          <option key={b._id} value={b._id}>
+            {b.brandName}
+          </option>
+        ))}
+      </select>
+      {(search || brandId) && (
+        <button
+          type="button"
+          onClick={() => {
+            onSearchChange("");
+            onBrandChange("");
+          }}
+          className="rounded-xl border px-4 py-2.5 text-sm font-medium shrink-0"
+          style={{ borderColor: ADMIN_BORDER_SOFT, color: ADMIN_MUTED }}
+        >
+          Xóa bộ lọc
+        </button>
+      )}
+    </div>
+  );
+}
+
+// ── Page: Perfumes ──────────────────────────────────────────────────────────
 export default function Perfumes() {
   const [showCreate, setShowCreate] = useState(false);
   const [editingPerfume, setEditingPerfume] = useState<PerfumeRes | null>(null);
+  const [search, setSearch] = useState("");
+  const [brandId, setBrandId] = useState("");
+
+  const { data: brandsData } = useQuery({
+    queryKey: BRANDS_QUERY_KEY,
+    queryFn: () => BrandService.getAllBrands(),
+  });
+  const brandOptions = brandsData?.data?.data ?? [];
 
   return (
-    <div className="p-6" style={{ color: BROWN_DARK }}>
-      {/* ── Page header ── */}
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1
-            className="font-serif text-xl font-bold tracking-wide"
-            style={{ color: BROWN_DARK }}
-          >
-            Nước Hoa
-          </h1>
-          <p className="mt-0.5 text-sm" style={{ color: "#B09490" }}>
-            Quản lý danh sách sản phẩm
-          </p>
-        </div>
-        <button
-          onClick={() => setShowCreate(true)}
-          className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-80"
-          style={{ backgroundColor: ROSEWOOD }}
-        >
-          <Plus size={15} />
-          Thêm nước hoa
-        </button>
-      </div>
+    <div className="p-4 sm:p-6">
+      <AdminPageHeader
+        title="Nước hoa"
+        subtitle="Quản lý danh sách sản phẩm nước hoa"
+        actionLabel="Thêm nước hoa"
+        actionIcon={<Plus size={16} />}
+        onAction={() => setShowCreate(true)}
+      />
 
-      {/* ── Table ── */}
-      <div
-        className="overflow-hidden rounded-xl border"
-        style={{ borderColor: BORDER_SOFT, backgroundColor: PANEL_BG }}
-      >
-        <PerfumeList onEdit={setEditingPerfume} />
-      </div>
+      <AdminPerfumeFilters
+        search={search}
+        onSearchChange={setSearch}
+        brandId={brandId}
+        onBrandChange={setBrandId}
+        brandOptions={brandOptions}
+      />
+
+      <AdminTableWrapper>
+        <PerfumeList onEdit={setEditingPerfume} search={search} brandId={brandId} />
+      </AdminTableWrapper>
 
       {/* ── Create drawer ── */}
       {showCreate && <PerfumeCreateForm onClose={() => setShowCreate(false)} />}

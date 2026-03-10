@@ -1,6 +1,10 @@
 export interface GetAllPerfumesReq {
   pageSize?: string;
   pageNumber?: string;
+  /** Tìm theo tên nước hoa (partial match, không phân biệt hoa thường) */
+  search?: string;
+  /** MongoId của brand để lọc */
+  brand?: string;
 }
 
 export interface CreatePerfumeReq {

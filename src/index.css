@@ -33,6 +33,36 @@ body {
   font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif;
   background: var(--blush);
   color: var(--brown-dark);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Nút chính dùng chung (có thể dùng class hoặc @apply trong component) */
+.btn-primary {
+  background-color: var(--rosewood);
+  color: var(--blush);
+  border-radius: 0.75rem;
+  font-weight: 600;
+  transition: background-color 0.2s, transform 0.1s;
+}
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--rosewood-deep);
+}
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Input chung */
+.input-common {
+  border: 1px solid var(--border-soft);
+  border-radius: 0.5rem;
+  color: var(--brown-dark);
+  transition: border-color 0.2s;
+}
+.input-common:focus {
+  outline: none;
+  border-color: var(--rosewood);
+  box-shadow: 0 0 0 2px rgba(192, 120, 80, 0.15);
 }
 
 

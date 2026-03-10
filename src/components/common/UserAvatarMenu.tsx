@@ -116,7 +116,7 @@ export default function UserAvatarMenu({
             style={{ color: BROWN_DARK }}
           >
             <LayoutDashboard size={15} style={{ color: ROSEWOOD }} />
-            Admin Dashboard
+            Khu vực quản trị
           </Link>
         )}
         {menuItems.map(({ icon: Icon, label, href }) => (

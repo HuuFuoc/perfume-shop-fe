@@ -71,7 +71,7 @@ function LoadingScreen() {
           <div className="absolute inset-0 rounded-full border-4 border-t-rosewood animate-spin" />
         </div>
         <p className="text-[10px] tracking-[0.45em] text-brown-muted uppercase font-medium">
-          Loading
+          Đang tải
         </p>
       </div>
     </div>
@@ -94,7 +94,7 @@ function ErrorScreen({
         onClick={onBack}
         className="text-xs text-rosewood tracking-[0.3em] uppercase hover:underline underline-offset-4 transition-all"
       >
-        ← Go Back
+        ← Quay lại
       </button>
     </div>
   );
@@ -112,7 +112,7 @@ function fetchPerfume(
     .then((res) => onSuccess(res.data.data as PerfumeWithComments))
     .catch((err) => {
       console.error("Error fetching perfume:", err);
-      onError("Unable to load perfume details. Please try again.");
+      onError("Không tải được thông tin sản phẩm. Vui lòng thử lại.");
     });
 }
 
@@ -179,7 +179,7 @@ export default function PerfumeDetailPage() {
   if (error || !perfume)
     return (
       <ErrorScreen
-        message={error ?? "Perfume not found."}
+        message={error ?? "Không tìm thấy sản phẩm."}
         onBack={() => navigate(-1)}
       />
     );
@@ -209,7 +209,7 @@ export default function PerfumeDetailPage() {
               href="/"
               className="hover:text-rosewood transition-colors duration-200"
             >
-              Home
+              Trang chủ
             </a>
           </li>
           <li className="opacity-40">/</li>
@@ -218,7 +218,7 @@ export default function PerfumeDetailPage() {
               href="/perfumes"
               className="hover:text-rosewood transition-colors duration-200"
             >
-              Perfumes
+              Nước hoa
             </a>
           </li>
           <li className="opacity-40">/</li>
@@ -251,17 +251,10 @@ export default function PerfumeDetailPage() {
                   🌸
                 </span>
                 <span className="text-[10px] tracking-[0.35em] text-brown-muted uppercase">
-                  No Image Available
+                  Chưa có ảnh
                 </span>
               </div>
             )}
-
-            {/* Concentration pill floating badge */}
-            <div className="absolute top-5 left-5 z-20 bg-white/75 backdrop-blur-md px-4 py-2 rounded-full border border-border-soft shadow-soft">
-              <span className="text-[10px] font-semibold tracking-[0.22em] text-brown-dark uppercase">
-                {perfume.concentration}
-              </span>
-            </div>
           </div>
 
           {/* Volume + audience info strip */}
@@ -270,7 +263,7 @@ export default function PerfumeDetailPage() {
               <span className="text-lg opacity-60">💧</span>
               <div>
                 <p className="text-[9px] tracking-[0.3em] text-brown-muted uppercase font-semibold">
-                  Volume
+                  Dung tích
                 </p>
                 <p className="text-sm font-semibold text-brown-dark leading-tight mt-0.5">
                   {perfume.volume} ml
@@ -281,7 +274,7 @@ export default function PerfumeDetailPage() {
               <span className="text-lg opacity-60">✨</span>
               <div>
                 <p className="text-[9px] tracking-[0.3em] text-brown-muted uppercase font-semibold">
-                  Audience
+                  Đối tượng
                 </p>
                 <p className="text-sm font-semibold text-brown-dark leading-tight mt-0.5">
                   {perfume.targetAudience}
@@ -297,7 +290,7 @@ export default function PerfumeDetailPage() {
           <div className="flex items-center gap-3">
             <div className="h-px w-7 bg-rosewood/40" />
             <span className="text-[10px] tracking-[0.42em] text-rosewood uppercase font-semibold">
-              {perfume.brand ?? "Independent Label"}
+              {perfume.brand ?? "Thương hiệu độc lập"}
             </span>
           </div>
 
@@ -311,7 +304,7 @@ export default function PerfumeDetailPage() {
             <StarRating filled={avgRating} total={reviewCount} />
             {reviewCount > 0 && (
               <span className="text-[10px] tracking-[0.25em] text-brown-muted uppercase">
-                {reviewCount} {reviewCount === 1 ? "review" : "reviews"}
+                {reviewCount} {reviewCount === 1 ? "đánh giá" : "đánh giá"}
               </span>
             )}
           </div>
@@ -323,73 +316,94 @@ export default function PerfumeDetailPage() {
               <span className="text-2xl font-light">₫</span>
             </p>
             <p className="text-[11px] text-brown-muted tracking-wide">
-              Free delivery on orders over 500,000₫
+              Miễn phí giao hàng đơn từ 500.000₫
             </p>
           </div>
 
-          {/* Short description */}
-          <p className="text-brown-mid text-sm leading-relaxed line-clamp-3">
-            {perfume.description}
-          </p>
+          {/* Mô tả ngắn — chỉ khi có nội dung có ý nghĩa */}
+          {perfume.description?.trim() &&
+            perfume.description.trim().toLowerCase() !== "oke" && (
+              <p className="text-brown-mid text-sm leading-relaxed">
+                {perfume.description.trim()}
+              </p>
+            )}
 
-          {/* Metadata badges */}
+          {/* Chỉ hiển thị Dung tích + Đối tượng (không hiển thị type/concentration) */}
           <div className="flex flex-wrap gap-3">
-            <MetaBadge label="Volume" value={`${perfume.volume} ml`} />
-            <MetaBadge label="Audience" value={perfume.targetAudience} />
-            <MetaBadge label="Type" value={perfume.concentration} />
+            <MetaBadge label="Dung tích" value={`${perfume.volume} ml`} />
+            <MetaBadge label="Đối tượng" value={perfume.targetAudience} />
           </div>
 
-          {/* Divider */}
           <div className="h-px bg-border-soft" />
 
-          {/* CTA buttons */}
+          {/* CTA: nổi bật, rõ hành động, đồng bộ tông màu */}
           <div className="flex flex-col sm:flex-row gap-3">
-            <button className="flex-1 py-4 bg-rosewood text-white text-[11px] font-bold tracking-[0.3em] uppercase rounded-[1.2rem] shadow-card hover:bg-rosewood-deep transition-all duration-300 active:scale-[0.97]">
-              Buy Now
+            <button
+              type="button"
+              className="flex-1 py-4 rounded-2xl text-sm font-bold tracking-[0.2em] uppercase text-white bg-rosewood hover:bg-rosewood-deep transition-all duration-200 active:scale-[0.98] shadow-card"
+            >
+              Mua ngay
             </button>
-            <button className="flex-1 py-4 border-2 border-border-soft text-brown-mid text-[11px] font-bold tracking-[0.3em] uppercase rounded-[1.2rem] hover:border-rosewood hover:text-rosewood hover:bg-petal/20 transition-all duration-300">
-              Add to Cart
+            <button
+              type="button"
+              className="flex-1 py-4 rounded-2xl text-sm font-bold tracking-[0.2em] uppercase border-2 border-border-soft text-brown-dark bg-white/50 hover:border-rosewood hover:text-rosewood hover:bg-petal/20 transition-all duration-200 active:scale-[0.98]"
+            >
+              Thêm vào giỏ
             </button>
           </div>
 
-          {/* Trust / delivery badge */}
+          {/* Trust: chỉ khi có giá trị với người mua */}
           <div className="flex items-center gap-4 px-5 py-4 bg-white/50 border border-border-soft rounded-2xl backdrop-blur-sm">
             <div className="w-9 h-9 rounded-full bg-petal flex items-center justify-center flex-shrink-0">
               <span className="text-rosewood text-base">✦</span>
             </div>
             <div>
               <p className="text-xs font-semibold text-brown-dark tracking-wide">
-                Authentic Luxury Fragrance
+                Nước hoa cao cấp chính hãng
               </p>
               <p className="text-[11px] text-brown-muted mt-0.5 leading-relaxed">
-                100% genuine — sourced directly from certified suppliers.
+                100% chính hãng — nguồn gốc từ nhà cung cấp được chứng nhận.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── Description & Ingredients ─────────────────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-6 lg:px-16 py-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white/65 backdrop-blur-sm rounded-3xl p-8 border border-border-soft shadow-soft">
-          <SectionHeading>Description</SectionHeading>
-          <p className="text-brown-mid text-sm leading-[1.85] whitespace-pre-wrap">
-            {perfume.description}
-          </p>
-        </div>
-
-        <div className="bg-white/65 backdrop-blur-sm rounded-3xl p-8 border border-border-soft shadow-soft">
-          <SectionHeading>Ingredients</SectionHeading>
-          <p className="text-brown-mid text-sm leading-[1.85] whitespace-pre-wrap">
-            {perfume.ingredients}
-          </p>
-        </div>
-      </section>
+      {/* ── Mô tả & Thành phần: chỉ hiển thị khi có nội dung có giá trị ── */}
+      {(() => {
+        const descOk =
+          perfume.description?.trim() &&
+          perfume.description.trim().toLowerCase() !== "oke";
+        const ingredientsOk =
+          perfume.ingredients?.trim() &&
+          perfume.ingredients.trim().toLowerCase() !== "oke";
+        if (!descOk && !ingredientsOk) return null;
+        return (
+          <section className="max-w-7xl mx-auto px-6 lg:px-16 py-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+            {descOk && (
+              <div className="bg-white/65 backdrop-blur-sm rounded-3xl p-8 border border-border-soft shadow-soft">
+                <SectionHeading>Mô tả</SectionHeading>
+                <p className="text-brown-mid text-sm leading-[1.85] whitespace-pre-wrap">
+                  {perfume.description!.trim()}
+                </p>
+              </div>
+            )}
+            {ingredientsOk && (
+              <div className="bg-white/65 backdrop-blur-sm rounded-3xl p-8 border border-border-soft shadow-soft">
+                <SectionHeading>Thành phần</SectionHeading>
+                <p className="text-brown-mid text-sm leading-[1.85] whitespace-pre-wrap">
+                  {perfume.ingredients!.trim()}
+                </p>
+              </div>
+            )}
+          </section>
+        );
+      })()}
 
       {/* ── Reviews / comments ────────────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-6 lg:px-16 py-8 pb-24">
         <SectionHeading>
-          Reviews{reviewCount > 0 ? ` · ${reviewCount}` : ""}
+          Đánh giá{reviewCount > 0 ? ` · ${reviewCount}` : ""}
         </SectionHeading>
 
         {/* ── Write comment form ── */}
@@ -458,10 +472,10 @@ export default function PerfumeDetailPage() {
             </div>
             <div className="text-center">
               <p className="text-sm font-medium text-brown-mid tracking-wide">
-                No reviews yet
+                Chưa có đánh giá nào
               </p>
               <p className="text-xs text-brown-muted mt-1 tracking-wide">
-                Be the first to share your experience with this fragrance.
+                Hãy là người đầu tiên chia sẻ trải nghiệm về mùi hương này.
               </p>
             </div>
           </div>
@@ -471,7 +485,7 @@ export default function PerfumeDetailPage() {
             {reviews.map((review, idx) => {
               const authorName = review.author
                 ? String(review.author)
-                : "Anonymous";
+                : "Ẩn danh";
               const initial = authorName.charAt(0).toUpperCase();
               const ratingVal =
                 typeof review.rating === "number" ? review.rating : 4;
@@ -515,7 +529,7 @@ export default function PerfumeDetailPage() {
                   <p className="text-brown-mid text-sm leading-relaxed">
                     {review.content
                       ? String(review.content)
-                      : "No content provided."}
+                      : "Không có nội dung."}
                   </p>
                 </div>
               );
